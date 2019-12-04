@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset
+shopt -s nullglob dotglob
+
+function -h {
+    cat <<USAGE
+Usage: setup [<workspace>]
+
+Setup the given workspace, or the outer directory if none is given. This is
+expected to exist as the parent directory of this script.
+USAGE
+}; function --help { "-h"; } # A nice way to handle -h and --help.
+
+SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)"
+CONFIG_PATH="$(cd "$SCRIPT_PATH/.." && pwd)"
+
+# shellcheck source=/dev/null
+source "$SCRIPT_PATH/lib/termui.sh"
+
+main() {
+    system_update
+    xcode_tools_install
+    brew_update_install
+    app_store_update
+    brew_bundle
+    run_scripts before
+    apply_defaults
+    apply_symlinks
+    run_scripts after
+}
+
+system_update() {
+    putprogress "Checking for system updates..."
+    print_run_cmd softwareupdate --list
+}
+
+xcode_tools_install() {
+    if ! has_dev_tools; then
+        putprogress "Installing the Xcode Command Line Tools."
+        print_run_cmd xcode-select --install
+        pause "Tap any key when the installation is complete. " >/dev/null
+        echo
+        if ! has_dev_tools; then
+            puterr "Aborted Xcode Command Line Tools installation."
+            exit 1
+        fi
+    fi
+}
+
+brew_update_install() {
+    if command -v brew >/dev/null; then
+        print_run_cmd brew update
+        print_run_cmd brew upgrade
+        print_run_cmd brew cask upgrade
+    else
+        putprogress "Installing Homebrew..."
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
+}
+
+app_store_update() {
+    putprogress "Upgrading apps from the App Store..."
+    if ! command -v mas >/dev/null; then
+        print_run_cmd brew install mas
+    fi
+
+    print_run_cmd mas upgrade
+}
+
+brew_bundle() {
+    (
+        cd "$CONFIG_PATH"
+        print_run_cmd brew bundle --no-lock
+    )
+}
+
+run_scripts() {
+    (
+        local dir="$CONFIG_PATH/run/$1"
+        putprogress "Running scripts in run/$1"
+        if [ ! -e "$dir" ] || [ -z "$(ls -A "$dir")" ]; then
+            echo "No scripts found."
+        elif [ ! -d "$dir" ]; then
+            puterr "Not a directory: $dir"
+            exit 1
+        else
+            cd "$dir"
+            for script in *; do
+                print_run_cmd "./$script"
+            done
+        fi
+    )
+}
+
+apply_symlinks() {
+    putprogress "Applying symlinks..."
+
+    (
+        cd "$CONFIG_PATH/symlinks"
+        for symlink_dir in */; do
+            addlink "$symlink_dir"
+        done
+    )
+
+    puts "Applied symlinks."
+}
+
+apply_defaults() {
+    putprogress "Applying defaults..."
+
+    # Close any open System Preferences panes, to prevent them from overriding
+    # settings we’re about to change.
+    print_run_cmd osascript -e 'quit app "System Preferences"'
+
+    (
+        cd "$CONFIG_PATH"
+        apply-user-defaults ./defaults.yaml
+    )
+}
+
+has_dev_tools() {
+    local developer_dir
+    developer_dir="$(xcode-select --print-path)"
+    if [ -d "$developer_dir" ] && [ -x "$developer_dir/usr/bin/git" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+addlink() {
+    if ! command -v stow >/dev/null; then
+        print_run_cmd brew install stow
+    fi
+
+    print_run_cmd stow "$1" --target="$HOME" --dotfiles --verbose=1
+}
+
+# Delegate to subcommands or run main, as appropriate.
+if declare -f -- "${1:-}" >/dev/null; then
+    "$@"
+else
+    main "$@"
+fi
