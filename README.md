@@ -1,4 +1,4 @@
-## Start with a clean slate
+## Zero.sh - Start with a clean slate
 
 This will create an identical installation on any Mac with a single command.
 
@@ -47,6 +47,9 @@ It will **not** wipe over files that already exist when symlinking or at any
 other point in the process, aside from what is done by system upgrade tools or
 in your own custom before & after scripts.
 
+In addition, there is **no magic** done in this script. Each command is printed
+before it is run.
+
 If you'd like, you can write an alias so you can invoke this script at any time
 to apply updates to all tools on your system:
 
@@ -67,7 +70,7 @@ to look like this:
 - Brewfile
 - defaults.yml
 - symlinks/
-    -> name/ # Alias to organize, for example "zsh", "vim", etc.
+    -> name/ # Arbitrary alias, for example "zsh", "vim", etc.
         => file or directory # Exact name of file or directory to symlink.
 - run/
     -> before/
@@ -152,7 +155,12 @@ few ways you can help:
 
 ## Credit
 
-This is partly inspired by [@gerhard](https://github.com/gerhard)'s
-[setup](https://github.com/gerhard/setup), in addition to [this blog
+This is partly inspired by [@gerhard's setup](https://github.com/gerhard/setup),
+in addition to [this blog
 post](http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html)
 on GNU Stow by Brandon Invergo.
+
+## License
+
+Zero.sh is licensed under the MIT License. See [LICENSE](LICENSE) for more
+information.
