@@ -32,11 +32,6 @@ puts() {
     echo -e "${UNDERLINE}${GREEN}Success!${RESET} $msg"
 }
 
-putdebug() {
-    local msg="$1"
-    echo -e "${BOLD}${YELLOW}==>${RESET} ${BOLD}$msg${RESET}"
-}
-
 putprogress() {
     local msg="$1"
     echo -e "${BOLD}${BLUE}==>${RESET} ${BOLD}$msg${RESET}"
@@ -47,8 +42,13 @@ puterr() {
     >&2 echo -e "${RED}Error${RESET}: $msg"
 }
 
+putbold() {
+    local msg="$1"
+    echo -e "${BOLD}${YELLOW}$msg${RESET}"
+}
+
 print_run_cmd() {
-    printf "${BOLD}${YELLOW}==>${RESET} ${BOLD}%s${RESET}\n" "$*"
+    printf "${BOLD}${YELLOW}==>${RESET} %s${RESET}\n" "$*"
     "$@"
 }
 
@@ -57,4 +57,4 @@ pause() {
     echo "$character"
 }
 
-export -f puts putdebug putprogress puterr print_run_cmd
+export -f puts putbold putprogress puterr print_run_cmd

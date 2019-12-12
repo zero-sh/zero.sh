@@ -39,7 +39,7 @@ main() {
     xcode_tools_install
     brew_update_install
     app_store_update
-    bootstrap_workspaces "${1:-}"
+    bootstrap_workspaces "${workspaces[@]}"
 }
 
 validate_params() {
@@ -128,12 +128,9 @@ app_store_update() {
 
 run_scripts() {
     local dir="./run/$1"
-    if [ ! -d "$dir" ]; then
-        return
-    fi
 
     (
-        putprogress "Running scripts in run/$1"
+        putprogress "Running scripts in run/$1..."
         if [ ! -e "$dir" ] || [ -z "$(ls -A "$dir")" ]; then
             echo "No scripts found."
         elif [ ! -d "$dir" ]; then
@@ -181,11 +178,6 @@ apply_defaults() {
     apply-user-defaults ./defaults.yaml
 }
 
-
-relpath() {
-    python -c 'import os, sys; print(os.path.relpath(*sys.argv[1:]))' "$@"
-}
-
 bootstrap_workspaces() {
     # Steps to setup a workspace:
     #
@@ -197,24 +189,30 @@ bootstrap_workspaces() {
     # 3. If $workspace is an empty string, bootstrap.
     #
     # 4. Else, for each directory in $workspace.split("."):
-    #    Change to it relative to the current path.
-    #    Run brew bundle in "common" if it exists.
-    #    If directory is a workspace, cd into "./workspaces"
+    #
+    #    If directory is a workspace container (i.e. it contains a
+    #    "./workspaces" directory):
+    #
+    #    - Change to "./workspaces" directory.
+    #    - Run brew bundle in "./common" if it exists.
+    #    - Change to the directory relative to the current path.
+    #
     #    Otherwise, iff directory is the last entry in the list, run brew bundle
     #    in the directory.
     #
     # 5. Do step (4) again, for run scripts, defaults & symlinks.
 
-    # shellcheck disable=SC2034
-    IFS='.' read -ra workspaces <<< "$1"
+    local -a workspaces=( "${@:-.}" )
+    workspaces_run_cmd workspaces[@] brew_bundle
+    workspaces_run_cmd workspaces[@] bootstrap_after
+}
 
-    if [ -z "$1" ]; then
-        brew_bundle "$CONFIG_PATH"
-        bootstrap_after "$CONFIG_PATH"
-    else
-        workspaces_run_cmd workspaces[@] brew_bundle
-        workspaces_run_cmd workspaces[@] bootstrap_after
-    fi
+abspath() {
+    python -c "import os, sys; print(os.path.abspath(sys.argv[1]))" "$1"
+}
+
+relpath() {
+    python -c 'import os, sys; print(os.path.relpath(*sys.argv[1:]))' "$@"
 }
 
 addlink() {
@@ -236,18 +234,21 @@ has_dev_tools() {
 }
 
 workspaces_run_cmd() {
-    declare -a workspace_dirs=( "${!1:}" )
+    local -a workspace_dirs=( "${!1}" )
     local cmd="$2"
     (
         cd "$CONFIG_PATH"
         for dir in "${workspace_dirs[@]}"; do
-            cd "./workspaces/$dir"
-            if [ -d ./common ]; then
-                $cmd ./common
-            fi
+            if [ -d "./workspaces" ]; then
+                cd "./workspaces"
 
-            # Last entry.
-            if [ ! -d "./workspaces" ]; then
+                if [ -d ./common ]; then
+                    $cmd ./common
+                fi
+
+                cd "./$dir"
+            else
+                # Always last entry due to prior validation.
                 $cmd .
             fi
         done
@@ -258,9 +259,10 @@ bootstrap_after() {
     local dir="$1"
     (
         cd "$dir"
-        if [ ! "$dir" = "$CONFIG_PATH" ]; then
-            putprogress "Finalizing setup for $(relpath "$dir" "$CONFIG_PATH")."
+        if [ ! "$(abspath ".")" = "$CONFIG_PATH" ]; then
+            putbold "Finalizing setup for $(relpath "." "$CONFIG_PATH")."
         fi
+
         run_scripts before
         apply_defaults
         apply_symlinks
@@ -271,9 +273,8 @@ bootstrap_after() {
 brew_bundle() {
     local dir="$1"
     (
-        cd "$dir"
-        if [ ! "$dir" = "$CONFIG_PATH" ]; then
-            putprogress "Running brew bundle for $(relpath "$dir" "$CONFIG_PATH")."
+        if [ ! "$(abspath ".")" = "$CONFIG_PATH" ]; then
+            putbold "Running brew bundle for $(relpath "." "$CONFIG_PATH")."
         fi
 
         if [ ! -f ./Brewfile ]; then
