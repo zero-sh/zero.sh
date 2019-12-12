@@ -50,8 +50,8 @@ in your own custom before & after scripts.
 In addition, there is **no magic** done in this script. Each command is printed
 before it is run.
 
-If you'd like, you can write an alias so you can invoke this script at any time
-to apply updates to all tools on your system:
+If you'd like, you can write an alias so you can invoke this at any time to
+apply updates to all tools on your system:
 
 ```sh
 alias update="$HOME/.dotfiles/zero/setup"
@@ -59,12 +59,12 @@ $ update
 ```
 
 Initially, this was encapsulated in a Python library called
-[cider](https://github.com/msanders/cider), but now that Homebrew added back
+[Cider](https://github.com/msanders/cider), but now that Homebrew added back
 Brewfile support it has been migrated to this simple shell script and directory
 structure instead.
 
-This structure in `~/.dotfiles` (or wherever you choose to store it) is expected
-to look like this:
+The directory structure in `~/.dotfiles` (or wherever you choose to store it) is
+expected to look like this:
 
 ```
 - Brewfile
@@ -168,6 +168,9 @@ To see how this works out in practice, here are some repos that use `zero.sh`.
 - GNU stow is a neat tool, but doesn't offer the same level of utility or error
   handling that Cider previously did. It would be nice to offer a more modern
   alternative.
+  
+- It will probably be necessary to migrate from bash to zsh or `/bin/sh` at some
+  point, now that bash is deprecated on Catalina.
 
 ## Dependencies
 
