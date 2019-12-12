@@ -80,6 +80,54 @@ to look like this:
 - zero/
 ```
 
+## Workspaces
+
+Multiple machine configurations can be managed via the following directory
+structure:
+
+```
+- workspaces/
+  -> common/
+  -> home/
+  -> work/
+```
+
+This will first apply the setup described in `common`, followed by `home` or
+`work` when specifying a workspace argument via:
+
+```
+~/.dotfiles/zero/setup [home|work]
+```
+
+It can also recurse, for example:
+
+```
+- workspaces/
+  -> common/
+  -> home/
+    => workspaces/
+      -> common/
+      -> desktop/
+      -> laptop/
+  -> work/
+```
+
+This describes three workspaces, `home.desktop`, and `home.laptop`, and `work`.
+
+It will run the same series of steps as before, but in each one first apply the
+step described in `common` of the parent or sister directory. For example, when
+running `zero/setup home.desktop`, it will do the following:
+
+1. Check for system and application updates.
+2. Install packages and applications via Homebrew or the system package manager.
+    - First in `workspaces/common`, then in `workspaces/home/workspaces/common`,
+      then in `workspaces/home/workspaces/desktop`.
+3. Run any scripts under `run/before` in alphabetical order.
+    - First in `workspaces/common`, then in `workspaces/home/workspaces/common`,
+      then in `workspaces/home/workspaces/desktop`.
+
+... etc., for each of the steps listed above.
+
 ## Installation
 
 It's recommended to integrate this script as a submodule:

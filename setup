@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset
-shopt -s nullglob dotglob
-
-function -h {
-    cat <<USAGE
-Usage: setup [<workspace>]
-
-Setup the given workspace, or the outer directory if none is given. This is
-expected to exist as the parent directory of this script.
-USAGE
-}; function --help { "-h"; } # A nice way to handle -h and --help.
+shopt -s dotglob
 
 SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_PATH="$(cd "$SCRIPT_PATH/.." && pwd)"
@@ -17,16 +8,32 @@ CONFIG_PATH="$(cd "$SCRIPT_PATH/.." && pwd)"
 # shellcheck source=/dev/null
 source "$SCRIPT_PATH/lib/termui.sh"
 
+show_version() {
+    echo "zero.sh 0.0.0"
+}
+
+show_usage() {
+    show_version
+    cat <<USAGE
+Usage: setup [<workspace>]
+
+Setup the given workspace, or the outer directory if none is given. This is
+expected to exist as the parent directory of this script.
+USAGE
+}
+
+# A nice way to handle simple flags.
+-h() { show_usage; }
+--help() { show_usage; }
+-v() { show_version; }
+--version() { show_version; }
+
 main() {
     system_update
     xcode_tools_install
     brew_update_install
     app_store_update
-    brew_bundle
-    run_scripts before
-    apply_defaults
-    apply_symlinks
-    run_scripts after
+    bootstrap_workspaces "${1:-}"
 }
 
 system_update() {
@@ -67,16 +74,13 @@ app_store_update() {
     print_run_cmd mas upgrade
 }
 
-brew_bundle() {
-    (
-        cd "$CONFIG_PATH"
-        print_run_cmd brew bundle --no-lock
-    )
-}
-
 run_scripts() {
+    local dir="./run/$1"
+    if [ ! -d "$dir" ]; then
+        return
+    fi
+
     (
-        local dir="$CONFIG_PATH/run/$1"
         putprogress "Running scripts in run/$1"
         if [ ! -e "$dir" ] || [ -z "$(ls -A "$dir")" ]; then
             echo "No scripts found."
@@ -93,29 +97,74 @@ run_scripts() {
 }
 
 apply_symlinks() {
+    if [ ! -d "./symlinks" ]; then
+        return
+    fi
+
     putprogress "Applying symlinks..."
 
     (
-        cd "$CONFIG_PATH/symlinks"
+        cd "./symlinks"
+        shopt -s nullglob
         for symlink_dir in */; do
             addlink "$symlink_dir"
         done
+        shopt -u nullglob
     )
 
     puts "Applied symlinks."
 }
 
 apply_defaults() {
+    if [ ! -f "./defaults.yml" ]; then
+        return
+    fi
+
     putprogress "Applying defaults..."
 
     # Close any open System Preferences panes, to prevent them from overriding
     # settings we’re about to change.
     print_run_cmd osascript -e 'quit app "System Preferences"'
 
-    (
-        cd "$CONFIG_PATH"
-        apply-user-defaults ./defaults.yaml
-    )
+    apply-user-defaults ./defaults.yaml
+}
+
+bootstrap_workspaces() {
+    # Steps to setup a workspace:
+    # 1. Validate input for entire directory structure before starting.
+    #
+    # 2. cd "$CONFIG_PATH"
+    #
+    # 3. If $workspace is an empty string, bootstrap.
+    #
+    # 4. Else, for each directory in $workspace.split("."):
+    #    Change to it relative to the current path.
+    #    Run brew bundle in "common" if it exists.
+    #    If directory is a workspace, cd into "./workspaces"
+    #    Otherwise, iff directory is the last entry in the list, run brew bundle
+    #    in the directory.
+    #
+    # 5. Do step (4) again, for run scripts, defaults & symlinks.
+
+    # shellcheck disable=SC2034
+    IFS='.' read -ra workspaces <<< "$1"
+
+    validate_workspaces workspaces[@]
+    if [ -z "$1" ]; then
+        brew_bundle "$CONFIG_PATH"
+        bootstrap_after "$CONFIG_PATH"
+    else
+        workspaces_run_cmd workspaces[@] brew_bundle
+        workspaces_run_cmd workspaces[@] bootstrap_after
+    fi
+}
+
+addlink() {
+    if ! command -v stow >/dev/null; then
+        print_run_cmd brew install stow
+    fi
+
+    print_run_cmd stow "$1" --target="$HOME" --dotfiles --verbose=1
 }
 
 has_dev_tools() {
@@ -128,12 +177,91 @@ has_dev_tools() {
     fi
 }
 
-addlink() {
-    if ! command -v stow >/dev/null; then
-        print_run_cmd brew install stow
+validate_workspaces() {
+    local -a workspace_dirs=( "${!1:-}" )
+    if [ -z "${workspace_dirs[0]}" ]; then
+        if [ -d "$CONFIG_PATH/workspaces" ]; then
+            puterr "Missing required parameter 'workspace'."
+            show_usage
+            exit 1
+        fi
+
+        return
     fi
 
-    print_run_cmd stow "$1" --target="$HOME" --dotfiles --verbose=1
+    (
+        cd "$CONFIG_PATH"
+        local idx=0
+        local last_idx
+        last_idx=$((${#workspace_dirs[@]} - 1))
+        for dir in "${workspace_dirs[@]}"; do
+            local workspace_dir="./workspaces/$dir"
+            if [ ! "$dir" = "." ] && [ ! -d "$workspace_dir" ]; then
+                puterr "The directory '$(relpath "$workspace_dir" "$CONFIG_PATH")' does not exist in '$CONFIG_PATH'."
+                exit 1
+            fi
+
+            cd "$workspace_dir"
+            if [ "$idx" -eq "$last_idx" ] && [ -d ./workspaces ]; then
+                puterr "Cannot bootstrap parent of a workspace."
+                exit 1
+            fi
+            ((idx+=1))
+        done
+    )
+}
+
+workspaces_run_cmd() {
+    declare -a workspace_dirs=( "${!1:}" )
+    local cmd="$2"
+    (
+        cd "$CONFIG_PATH"
+        for dir in "${workspace_dirs[@]}"; do
+            cd "./workspaces/$dir"
+            if [ -d ./common ]; then
+                $cmd ./common
+            fi
+
+            # Last entry.
+            if [ ! -d "./workspaces" ]; then
+                $cmd .
+            fi
+        done
+    )
+}
+
+bootstrap_after() {
+    local dir="$1"
+    (
+        cd "$dir"
+        if [ ! "$dir" = "$CONFIG_PATH" ]; then
+            putprogress "Finalizing setup for $(relpath "$dir" "$CONFIG_PATH")."
+        fi
+        run_scripts before
+        apply_defaults
+        apply_symlinks
+        run_scripts after
+    )
+}
+
+brew_bundle() {
+    local dir="$1"
+    (
+        cd "$dir"
+        if [ ! "$dir" = "$CONFIG_PATH" ]; then
+            putprogress "Running brew bundle for $(relpath "$dir" "$CONFIG_PATH")."
+        fi
+
+        if [ ! -f ./Brewfile ]; then
+            echo "No Brewfile found."
+        else
+            print_run_cmd brew bundle --no-lock
+        fi
+    )
+}
+
+relpath() {
+    python -c 'import os, sys; print(os.path.relpath(*sys.argv[1:]))' "$@"
 }
 
 # Delegate to subcommands or run main, as appropriate.
