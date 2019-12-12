@@ -29,11 +29,63 @@ USAGE
 --version() { show_version; }
 
 main() {
+    validate_params "$@"
+
+    local -a workspaces
+    IFS='.' read -ra workspaces <<< "${1:-}"
+    validate_workspaces "${workspaces[@]:-}"
+
     system_update
     xcode_tools_install
     brew_update_install
     app_store_update
     bootstrap_workspaces "${1:-}"
+}
+
+validate_params() {
+    if [ "$#" -gt 1 ]; then
+        puterr "Invalid number of arguments."
+        exit 1
+    fi
+
+    if [[ "${1:-}" == *".."* ]] || [[ "${1:-}" == *"/"* ]]; then
+        puterr "Invalid workspace format."
+        exit 1
+    fi
+}
+
+validate_workspaces() {
+    local -a workspace_dirs=( "$@" )
+    if [ -z "${workspace_dirs[0]}" ]; then
+        if [ -d "$CONFIG_PATH/workspaces" ]; then
+            puterr "Missing required parameter 'workspace'."
+            show_usage
+            exit 1
+        fi
+
+        return
+    fi
+
+    (
+        cd "$CONFIG_PATH"
+        local idx=0
+        local last_idx
+        last_idx=$((${#workspace_dirs[@]} - 1))
+        for dir in "${workspace_dirs[@]}"; do
+            local workspace_dir="./workspaces/$dir"
+            if [ ! "$dir" = "." ] && [ ! -d "$workspace_dir" ]; then
+                puterr "The directory '$(relpath "$workspace_dir" "$CONFIG_PATH")' does not exist in '$CONFIG_PATH'."
+                exit 1
+            fi
+
+            cd "$workspace_dir"
+            if [ "$idx" -eq "$last_idx" ] && [ -d ./workspaces ]; then
+                puterr "Cannot bootstrap parent of a workspace."
+                exit 1
+            fi
+            ((idx+=1))
+        done
+    )
 }
 
 system_update() {
@@ -129,9 +181,16 @@ apply_defaults() {
     apply-user-defaults ./defaults.yaml
 }
 
+
+relpath() {
+    python -c 'import os, sys; print(os.path.relpath(*sys.argv[1:]))' "$@"
+}
+
 bootstrap_workspaces() {
     # Steps to setup a workspace:
-    # 1. Validate input for entire directory structure before starting.
+    #
+    # 1. Validate input for entire directory structure before starting (this is
+    #    done at the beginning of the script).
     #
     # 2. cd "$CONFIG_PATH"
     #
@@ -149,7 +208,6 @@ bootstrap_workspaces() {
     # shellcheck disable=SC2034
     IFS='.' read -ra workspaces <<< "$1"
 
-    validate_workspaces workspaces[@]
     if [ -z "$1" ]; then
         brew_bundle "$CONFIG_PATH"
         bootstrap_after "$CONFIG_PATH"
@@ -175,40 +233,6 @@ has_dev_tools() {
     else
         return 1
     fi
-}
-
-validate_workspaces() {
-    local -a workspace_dirs=( "${!1:-}" )
-    if [ -z "${workspace_dirs[0]}" ]; then
-        if [ -d "$CONFIG_PATH/workspaces" ]; then
-            puterr "Missing required parameter 'workspace'."
-            show_usage
-            exit 1
-        fi
-
-        return
-    fi
-
-    (
-        cd "$CONFIG_PATH"
-        local idx=0
-        local last_idx
-        last_idx=$((${#workspace_dirs[@]} - 1))
-        for dir in "${workspace_dirs[@]}"; do
-            local workspace_dir="./workspaces/$dir"
-            if [ ! "$dir" = "." ] && [ ! -d "$workspace_dir" ]; then
-                puterr "The directory '$(relpath "$workspace_dir" "$CONFIG_PATH")' does not exist in '$CONFIG_PATH'."
-                exit 1
-            fi
-
-            cd "$workspace_dir"
-            if [ "$idx" -eq "$last_idx" ] && [ -d ./workspaces ]; then
-                puterr "Cannot bootstrap parent of a workspace."
-                exit 1
-            fi
-            ((idx+=1))
-        done
-    )
 }
 
 workspaces_run_cmd() {
@@ -258,10 +282,6 @@ brew_bundle() {
             print_run_cmd brew bundle --no-lock
         fi
     )
-}
-
-relpath() {
-    python -c 'import os, sys; print(os.path.relpath(*sys.argv[1:]))' "$@"
 }
 
 # Delegate to subcommands or run main, as appropriate.
