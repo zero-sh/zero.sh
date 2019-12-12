@@ -194,7 +194,7 @@ bootstrap_workspaces() {
     #    "./workspaces" directory):
     #
     #    - Change to "./workspaces" directory.
-    #    - Run brew bundle in "./common" if it exists.
+    #    - Run brew bundle in "./shared" if it exists.
     #    - Change to the directory relative to the current path.
     #
     #    Otherwise, iff directory is the last entry in the list, run brew bundle
@@ -242,8 +242,8 @@ workspaces_run_cmd() {
             if [ -d "./workspaces" ]; then
                 cd "./workspaces"
 
-                if [ -d ./common ]; then
-                    $cmd ./common
+                if [ -d ./shared ]; then
+                    $cmd ./shared
                 fi
 
                 cd "./$dir"

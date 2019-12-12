@@ -87,12 +87,12 @@ structure:
 
 ```
 - workspaces/
-  -> common/
+  -> shared/
   -> home/
   -> work/
 ```
 
-This will first apply the setup described in `common`, followed by `home` or
+This will first apply the setup described in `shared`, followed by `home` or
 `work` when specifying a workspace argument via:
 
 ```
@@ -103,10 +103,10 @@ It can also recurse, for example:
 
 ```
 - workspaces/
-  -> common/
+  -> shared/
   -> home/
     => workspaces/
-      -> common/
+      -> shared/
       -> desktop/
       -> laptop/
   -> work/
@@ -115,15 +115,15 @@ It can also recurse, for example:
 This describes three workspaces, `home.desktop`, and `home.laptop`, and `work`.
 
 It will run the same series of steps as before, but in each one first apply the
-step described in `common` of the parent or sister directory. For example, when
+step described in `shared` of the parent or sister directory. For example, when
 running `zero/setup home.desktop`, it will do the following:
 
 1. Check for system and application updates.
 2. Install packages and applications via Homebrew or the system package manager.
-    - First in `workspaces/common`, then in `workspaces/home/workspaces/common`,
+    - First in `workspaces/shared`, then in `workspaces/home/workspaces/shared`,
       then in `workspaces/home/workspaces/desktop`.
 3. Run any scripts under `run/before` in alphabetical order.
-    - First in `workspaces/common`, then in `workspaces/home/workspaces/common`,
+    - First in `workspaces/shared`, then in `workspaces/home/workspaces/shared`,
       then in `workspaces/home/workspaces/desktop`.
 
 ... etc., for each of the steps listed above.
