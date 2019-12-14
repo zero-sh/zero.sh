@@ -16,13 +16,13 @@ Instead, just run the following:
 
 ```sh
 # Clone your configuration repo wherever you like. For example:
-git clone --recursive https://github.com/{you}/{your-repo} ~/.dotfiles
+$ git clone --recursive https://github.com/{you}/{your-repo} ~/.dotfiles
 
 # Run this script, typically included as a submodule.
 #
 # If on a new machine, once finished, restart and run again to ensure system 
 # settings are applied correctly.
-~/.dotfiles/zero/setup
+$ ~/.dotfiles/zero/setup
 ```
 
 ... and you'll be back up and running, with all of your applications and command
@@ -54,7 +54,7 @@ If you'd like, you can write an alias so you can invoke this at any time to
 apply updates to all tools on your system:
 
 ```sh
-alias update="$HOME/.dotfiles/zero/setup"
+$ alias update="$HOME/.dotfiles/zero/setup"
 $ update
 ```
 
@@ -133,8 +133,8 @@ running `zero/setup home.desktop`, it will do the following:
 It's recommended to integrate this script as a submodule:
 
 ```sh
-cd ~/.your-dotfile-repo
-git submodule add https://github.com/zero-sh/zero.sh zero
+$ cd ~/.your-dotfile-repo
+$ git submodule add https://github.com/zero-sh/zero.sh zero
 ```
 
 Then make sure to run `git submodule update --init` after pulling to instantiate
@@ -143,7 +143,7 @@ Then make sure to run `git submodule update --init` after pulling to instantiate
 To update to the latest upstream changes, run: 
 
 ```sh
-git submodule update --remote --merge
+$ git submodule update --remote --merge
 ```
 
 ## Working examples
@@ -165,12 +165,15 @@ To see how this works out in practice, here are some repos that use `zero.sh`.
   they are contained in under `symlinks/`. This works fine for my use-case but
   not sure if it will be enough for others.
 
-- GNU stow is a neat tool, but doesn't offer the same level of utility or error
+- GNU Stow is a neat tool, but doesn't offer the same level of utility or error
   handling that Cider previously did. It would be nice to offer a more modern
   alternative.
   
 - It will probably be necessary to migrate from bash to zsh or `/bin/sh` at some
-  point, now that bash is deprecated on Catalina.
+  point, now that bash is deprecated on macOS Catalina.
+
+**Note**: `zero.sh` is a work-in-progress, but it's fairly well-tested and
+should be kind to your machine.
 
 ## Dependencies
 
@@ -178,7 +181,8 @@ These dependencies are required & installed when running the setup script:
 
 - Xcode Command Line Tools.
 - [Homebrew](https://brew.sh).
-- `apply-user-defaults` installed via Homebrew.
+- [`apply-user-defaults`](https://github.com/zero-sh/apply-user-defaults)
+  installed via Homebrew.
 - [`mas`](https://github.com/mas-cli/mas) installed via Homebrew.
 - [`stow`](https://www.gnu.org/software/stow/) installed via Homebrew.
 
