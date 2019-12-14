@@ -170,6 +170,10 @@ apply_defaults() {
 
     putprogress "Applying defaults..."
 
+    if ! command -v apply-user-defaults >/dev/null; then
+        print_run_cmd brew install zero-sh/tap/apply-user-defaults
+    fi
+
     # Close any open System Preferences panes, to prevent them from overriding
     # settings we’re about to change.
     print_run_cmd osascript -e 'quit app "System Preferences"'
