@@ -13,7 +13,6 @@ show_version() {
 }
 
 show_usage() {
-    show_version
     cat <<USAGE
 Usage: setup [<workspace>]
 
@@ -23,8 +22,8 @@ USAGE
 }
 
 # A nice way to handle simple flags.
--h() { show_usage; }
---help() { show_usage; }
+-h() { show_version; show_usage; }
+--help() { show_version; show_usage; }
 -v() { show_version; }
 --version() { show_version; }
 
