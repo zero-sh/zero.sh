@@ -9,7 +9,15 @@ CONFIG_PATH="$(cd "$SCRIPT_PATH/.." && pwd)"
 source "$SCRIPT_PATH/lib/termui.sh"
 
 show_version() {
-    echo "zero.sh 0.0.0"
+    local version="0.0.0"
+    (
+        cd "$SCRIPT_PATH"
+        if [ -d "./.git" ]; then
+            echo "zero.sh $version $(git rev-parse --short HEAD)"
+        else
+            echo "zero.sh $version"
+        fi
+    )
 }
 
 show_usage() {
