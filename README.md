@@ -1,6 +1,6 @@
 ## Zero.sh - Start with a clean slate
 
-This will create an identical installation on any Mac with a single command.
+#### Create an identical installation on any Mac with a single command.
 
 This lets you to restore a machine without having to deal with the mess that was
 the state of a previous installation, or painstakingly babysit the process
@@ -28,7 +28,7 @@ $ ~/.dotfiles/zero/setup
 ... and you'll be back up and running, with all of your applications and command
 line utilities re-installed (and configurations restored).
 
-During setup, you may asked for your password as some commands require admin
+During setup, you may be asked for your password as some commands require admin
 privileges. Each of these will be printed before running.
 
 The setup script will do the following, in order:
@@ -148,7 +148,7 @@ $ git submodule update --remote --merge
 
 ## Working examples
 
-To see how this works out in practice, here are some repos that use `zero.sh`.
+To see how this works out in practice, here are some repos that use `zero.sh`:
 
 - [msanders/dotfiles](https://github.com/msanders/dotfiles)
 
@@ -208,12 +208,13 @@ few ways you can help:
 - Write, clarify, or fix documentation.
 - Suggest or add new features.
 
-## Credit
+## Inspiration
 
 This is partly inspired by [@gerhard's setup](https://github.com/gerhard/setup),
 in addition to [this blog
 post](http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html)
-on GNU Stow by Brandon Invergo.
+on GNU Stow by Brandon Invergo. It is structurally based on
+[Cider](https://github.com/msanders/cider).
 
 ## License
 
