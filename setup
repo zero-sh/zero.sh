@@ -46,7 +46,7 @@ main() {
     xcode_tools_install
     brew_update_install
     app_store_update
-    bootstrap_workspaces "${workspaces[@]}"
+    bootstrap_workspaces "${workspaces[@]:-}"
 }
 
 validate_params() {
