@@ -28,15 +28,19 @@ $ ~/.dotfiles/zero/setup
 ... and you'll be back up and running, with all of your applications and command
 line utilities re-installed (and configurations restored).
 
+## 
+
 During setup, you may be asked for your password as some commands require admin
 privileges. Each of these will be printed before running.
 
 The setup script will do the following, in order:
 
 1. Check for system and application updates.
-2. Install packages and applications via Homebrew or the system package manager.
+2. Install packages and applications via [Homebrew
+   Bundle](https://github.com/Homebrew/homebrew-bundle).
 3. Run any scripts under `run/before` in alphabetical order.
-4. Apply system defaults described in `defaults.yml`.
+4. Apply system defaults described in `defaults.yml` via
+   [apply-user-defaults](https://github.com/zero-sh/apply-user-defaults).
 5. Symlink configuration files listed under `symlinks` to the home directory.
 6. Run the remaining scripts under `run/after` in alphabetical order.
 
@@ -67,8 +71,8 @@ The directory structure in `~/.dotfiles` (or wherever you choose to store it) is
 expected to look like this:
 
 ```
-- Brewfile
-- defaults.yml
+- Brewfile # Homebrew Bundle dependency file.
+- defaults.yml # macOS defaults to be set by apply-user-defaults command.
 - symlinks/
     -> name/ # Arbitrary alias, for example "zsh", "vim", etc.
         => file or directory # Exact name of file or directory to symlink.
@@ -77,7 +81,7 @@ expected to look like this:
         => [ ... executable scripts ... ]
     -> after/
         => [ ... executable scripts ... ]
-- zero/
+- zero/ # Submodule pointing to zero.sh repo.
 ```
 
 ## Workspaces
@@ -137,8 +141,8 @@ $ cd ~/.your-dotfile-repo
 $ git submodule add https://github.com/zero-sh/zero.sh zero
 ```
 
-Then make sure to run `git submodule update --init` after pulling to instantiate
-(or use the `--recursive` flag during cloning as shown above).
+Then make sure to run `git submodule update --init` after pulling your dotfiles
+repo to instantiate (or use the `--recursive` flag when cloning as shown above).
 
 To update to the latest upstream changes, run: 
 
