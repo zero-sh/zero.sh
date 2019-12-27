@@ -42,6 +42,7 @@ main() {
     IFS='.' read -ra workspaces <<< "${1:-}"
     validate_workspaces "${workspaces[@]:-}"
 
+    check_reachability
     system_update
     xcode_tools_install
     brew_update_install
@@ -93,6 +94,13 @@ validate_workspaces() {
             ((idx+=1))
         done
     )
+}
+
+check_reachability() {
+    if ! curl www.apple.com; then
+        puterr "You are not connected to the Internet. Please connect to continue."
+        exit 1
+    fi
 }
 
 system_update() {
