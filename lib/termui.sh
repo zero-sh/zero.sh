@@ -3,8 +3,9 @@ set -o errexit -o nounset
 
 set +o nounset
 # Respect https://no-color.org/ and https://bixense.com/clicolors/.
-if [[ -n "$NO_COLOR" || ( -n "$CLICOLOR" && "$CLICOLOR" -eq 0 ) || \
-    ( ! -t 1 && "$CLICOLOR_FORCE" -eq 0 )]]; then
+if [ -n "$NO_COLOR" ] ||
+    [[ -n $CLICOLOR && $CLICOLOR -eq 0 ]] ||
+    [[ ! -t 1 && $CLICOLOR_FORCE -eq 0 ]]; then
     UNDERLINE=""
     BOLD=""
 
@@ -39,7 +40,7 @@ putprogress() {
 
 puterr() {
     local msg="$1"
-    >&2 echo -e "${RED}Error${RESET}: $msg"
+    echo >&2 -e "${RED}Error${RESET}: $msg"
 }
 
 putbold() {

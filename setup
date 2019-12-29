@@ -30,8 +30,14 @@ USAGE
 }
 
 # A nice way to handle simple flags.
--h() { show_version; show_usage; }
---help() { show_version; show_usage; }
+-h() {
+    show_version
+    show_usage
+}
+--help() {
+    show_version
+    show_usage
+}
 -v() { show_version; }
 --version() { show_version; }
 
@@ -39,7 +45,7 @@ main() {
     validate_params "$@"
 
     local -a workspaces
-    IFS='.' read -ra workspaces <<< "${1:-}"
+    IFS='.' read -ra workspaces <<<"${1:-}"
     validate_workspaces "${workspaces[@]:-}"
 
     check_reachability
@@ -56,14 +62,14 @@ validate_params() {
         exit 1
     fi
 
-    if [[ "${1:-}" == *".."* ]] || [[ "${1:-}" == *"/"* ]]; then
+    if [[ ${1:-} == *".."* ]] || [[ ${1:-} == *"/"* ]]; then
         puterr "Invalid workspace format."
         exit 1
     fi
 }
 
 validate_workspaces() {
-    local -a workspace_dirs=( "$@" )
+    local -a workspace_dirs=("$@")
     if [ -z "${workspace_dirs[0]}" ]; then
         if [ -d "$CONFIG_PATH/workspaces" ]; then
             puterr "Missing required parameter 'workspace'."
@@ -91,7 +97,7 @@ validate_workspaces() {
                 puterr "Cannot bootstrap parent of a workspace."
                 exit 1
             fi
-            ((idx+=1))
+            ((idx += 1))
         done
     )
 }
@@ -221,7 +227,7 @@ bootstrap_workspaces() {
     #
     # 5. Do step (4) again, for run scripts, defaults & symlinks.
 
-    local -a workspaces=( "${@:-.}" )
+    local -a workspaces=("${@:-.}")
     workspaces_run_cmd workspaces[@] brew_bundle
     workspaces_run_cmd workspaces[@] bootstrap_after
 }
@@ -253,7 +259,7 @@ has_dev_tools() {
 }
 
 workspaces_run_cmd() {
-    local -a workspace_dirs=( "${!1}" )
+    local -a workspace_dirs=("${!1}")
     local cmd="$2"
     (
         cd "$CONFIG_PATH"
