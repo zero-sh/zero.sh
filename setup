@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
+#
+# Radically simple zero-file configuration management for macOS.
+# https://github.com/zero-sh/zero.sh
+
 set -o errexit -o nounset
 shopt -s dotglob
 
 SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_PATH="$(cd "$SCRIPT_PATH/.." && pwd)"
+readonly SCRIPT_PATH CONFIG_PATH
 
 # shellcheck source=/dev/null
 source "$SCRIPT_PATH/lib/termui.sh"
 
 show_version() {
-    local version="0.0.0"
+    local -r version="0.0.0"
     (
         cd "$SCRIPT_PATH"
         if [ -d "./.git" ]; then
@@ -69,7 +74,7 @@ validate_params() {
 }
 
 validate_workspaces() {
-    local -a workspace_dirs=("$@")
+    local -a -r workspace_dirs=("$@")
     if [ -z "${workspace_dirs[0]}" ]; then
         if [ -d "$CONFIG_PATH/workspaces" ]; then
             puterr "Missing required parameter 'workspace'."
@@ -86,7 +91,7 @@ validate_workspaces() {
         local last_idx
         last_idx=$((${#workspace_dirs[@]} - 1))
         for dir in "${workspace_dirs[@]}"; do
-            local workspace_dir="./workspaces/$dir"
+            local -r workspace_dir="./workspaces/$dir"
             if [ ! "$dir" = "." ] && [ ! -d "$workspace_dir" ]; then
                 puterr "The directory '$(relpath "$workspace_dir" "$CONFIG_PATH")' does not exist in '$CONFIG_PATH'."
                 exit 1
@@ -118,7 +123,7 @@ xcode_tools_install() {
     if ! has_dev_tools; then
         putprogress "Installing the Xcode Command Line Tools."
         print_run_cmd xcode-select --install
-        pause "Tap any key when the installation is complete. " >/dev/null
+        tty::pause "Tap any key when the installation is complete. " >/dev/null
         echo
         if ! has_dev_tools; then
             puterr "Aborted Xcode Command Line Tools installation."
@@ -148,7 +153,7 @@ app_store_update() {
 }
 
 run_scripts() {
-    local dir="./run/$1"
+    local -r dir="./run/$1"
 
     (
         putprogress "Running scripts in run/$1..."
@@ -227,7 +232,7 @@ bootstrap_workspaces() {
     #
     # 5. Do step (4) again, for run scripts, defaults & symlinks.
 
-    local -a workspaces=("${@:-.}")
+    local -a -r workspaces=("${@:-.}")
     workspaces_run_cmd workspaces[@] brew_bundle
     workspaces_run_cmd workspaces[@] bootstrap_after
 }
@@ -259,8 +264,8 @@ has_dev_tools() {
 }
 
 workspaces_run_cmd() {
-    local -a workspace_dirs=("${!1}")
-    local cmd="$2"
+    local -a -r workspace_dirs=("${!1}")
+    local -r cmd="$2"
     (
         cd "$CONFIG_PATH"
         for dir in "${workspace_dirs[@]}"; do
@@ -281,7 +286,7 @@ workspaces_run_cmd() {
 }
 
 bootstrap_after() {
-    local dir="$1"
+    local -r dir="$1"
     (
         cd "$dir"
         if [ ! "$(abspath ".")" = "$CONFIG_PATH" ]; then
@@ -296,7 +301,7 @@ bootstrap_after() {
 }
 
 brew_bundle() {
-    local dir="$1"
+    local -r dir="$1"
     (
         if [ ! "$(abspath ".")" = "$CONFIG_PATH" ]; then
             putbold "Running brew bundle for $(relpath "." "$CONFIG_PATH")."

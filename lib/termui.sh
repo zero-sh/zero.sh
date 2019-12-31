@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+# tty utilities for zero.sh.
 set -o errexit -o nounset
 
 set +o nounset
@@ -29,22 +31,22 @@ fi
 set -o nounset
 
 puts() {
-    local msg="$1"
+    local -r msg="$1"
     echo -e "${UNDERLINE}${GREEN}Success!${RESET} $msg"
 }
 
 putprogress() {
-    local msg="$1"
+    local -r msg="$1"
     echo -e "${BOLD}${BLUE}==>${RESET} ${BOLD}$msg${RESET}"
 }
 
 puterr() {
-    local msg="$1"
+    local -r msg="$1"
     echo >&2 -e "${RED}Error${RESET}: $msg"
 }
 
 putbold() {
-    local msg="$1"
+    local -r msg="$1"
     echo -e "${BOLD}${YELLOW}$msg${RESET}"
 }
 
@@ -53,9 +55,8 @@ print_run_cmd() {
     "$@"
 }
 
-pause() {
+tty::pause() {
+    local character
     read -rp "$1" -n1 character
     echo "$character"
 }
-
-export -f puts putbold putprogress puterr print_run_cmd
