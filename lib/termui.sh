@@ -55,6 +55,16 @@ print_run_cmd() {
     "$@"
 }
 
+tty::confirm() {
+    local character
+    local empty_re="^[[:space:]]*$"
+    read -rp "$1 [y/N] " character
+    if [[ "$character" =~ (^[Nn]$|$empty_re) ]]; then
+        return 1
+    fi
+    return 0
+}
+
 tty::pause() {
     local character
     read -rp "$1" -n1 character

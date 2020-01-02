@@ -116,7 +116,23 @@ check_reachability() {
 
 system_update() {
     putprogress "Checking for system updates..."
-    print_run_cmd softwareupdate --list
+    local -r update_needle="Software Update found the following new or updated software:"
+
+    # `NSUnbufferedIO` forces output of `softwareupdate` to be unbuffered so
+    # it's printed as it's being run, rather than when it completes.
+    #
+    # See https://stackoverflow.com/a/59557241
+    if NSUnbufferedIO=YES print_run_cmd softwareupdate --list |
+        tee /dev/tty |
+        grep -Fq "$update_needle"; then
+        if tty::confirm "Install system updates? This will restart your machine if necessary."; then
+            print_run_cmd sudo softwareupdate --install --all --restart
+            exit 0
+        else
+            echo >&2 "Aborting."
+            exit 1
+        fi
+    fi
 }
 
 xcode_tools_install() {
