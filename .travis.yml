@@ -1,0 +1,6 @@
+language: minimal
+os: osx
+before_install:
+  - brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d298ead/Formula/shellcheck.rb
+script:
+  - ./ci/lint
