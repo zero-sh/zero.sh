@@ -59,6 +59,7 @@ main() {
     validate_workspaces "${workspaces[@]:-}"
 
     check_reachability
+    self_update "$@"
     system_update
     xcode_tools_install
     brew_update_install
@@ -117,6 +118,31 @@ check_reachability() {
         puterr "You are not connected to the Internet. Please connect to continue."
         exit 1
     fi
+}
+
+self_update() {
+    (
+        cd "$SCRIPT_PATH"
+        putprogress "Checking for updates to zero.sh..."
+        local latest_tag
+        latest_tag="$(git tag |
+            grep --invert-match "[A-Za-z]" |
+            sort -V |
+            tail -n1)"
+
+        if git tag --points-at HEAD | grep -Fxq "$latest_tag"; then
+            echo "zero.sh is up-to-date."
+        else
+            if tty::confirm "The latest stable version of zero.sh is $latest_tag. Update copy in $CONFIG_PATH?"; then
+                print_run_cmd git checkout "$latest_tag"
+                puts "Updated. Re-invoking script."
+                "$SCRIPT_PATH"/setup "$@"
+                exit 0
+            else
+                echo "Skipping."
+            fi
+        fi
+    )
 }
 
 system_update() {
