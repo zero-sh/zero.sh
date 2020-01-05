@@ -143,14 +143,16 @@ $ cd ~/.your-dotfile-repo
 $ git submodule add https://github.com/zero-sh/zero.sh zero
 ```
 
-Then make sure to run `git submodule update --init` after pulling your dotfiles
-repo to instantiate (or use the `--recursive` flag when cloning as shown above).
-
-To update to the latest upstream changes, run: 
+Then, to pin to the latest stable version, run:
 
 ```sh
-$ git submodule update --remote --merge
+git submodule update --init --remote --reference 0.1.0 zero 
+git commit
 ```
+
+Note that it may be necessary run `git submodule update --init` later when
+pulling in this change into an existing repo, unless the `--recursive` flag is
+included when cloning as shown above.
 
 ## Working examples
 
