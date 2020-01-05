@@ -177,8 +177,9 @@ To see how this works out in practice, here are some repos that use `zero.sh`:
   handling that Cider previously did. It would be nice to offer a more modern
   alternative.
   
-- It will probably be necessary to migrate from bash to zsh or `/bin/sh` at some
-  point, now that bash is deprecated on macOS Catalina.
+- It will probably be necessary to migrate from bash to zsh or `/bin/sh` (or
+  perhaps a Swift script) at some point, now that bash is deprecated on macOS
+  Catalina.
 
 **Note**: `zero.sh` is a work-in-progress, but it's fairly well-tested and
 should be kind to your machine.
@@ -211,8 +212,8 @@ cloned directory aside from the few dependencies listed above.
 If you are interested in this project, please consider contributing. Here are a
 few ways you can help:
 
-- Report issues.
-- Fix bugs and submit pull requests.
+- [Report issues](https://github.com/zero-sh/zero.sh/issues).
+- Fix bugs and [submit pull requests](https://github.com/zero-sh/zero.sh/pulls).
 - Write, clarify, or fix documentation.
 - Suggest or add new features.
 
@@ -221,8 +222,8 @@ few ways you can help:
 This is partly inspired by [@gerhard's setup](https://github.com/gerhard/setup),
 in addition to [this blog
 post](http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html)
-on GNU Stow by Brandon Invergo. It is structurally based on
-[Cider](https://github.com/msanders/cider).
+on GNU Stow by Brandon Invergo. It is structurally based on (and the spiritual
+successor to) [Cider](https://github.com/msanders/cider).
 
 ## License
 
