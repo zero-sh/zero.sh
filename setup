@@ -17,10 +17,15 @@ show_version() {
     local -r version="0.0.0"
     (
         cd "$SCRIPT_PATH"
-        if [ -d "./.git" ]; then
-            echo "zero.sh $version $(git rev-parse --short HEAD)"
-        else
+        if git tag --points-at HEAD | grep -q "^$version\$"; then
+            # At pinned version.
             echo "zero.sh $version"
+        else
+            # For untagged checkouts, just list the commit date and a sha.
+            local date sha
+            date="$(git show -s --format=%ci HEAD)"
+            sha="$(git rev-parse --short HEAD)"
+            echo "zero.sh $date $sha (alpha)"
         fi
     )
 }
