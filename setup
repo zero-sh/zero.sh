@@ -17,7 +17,7 @@ show_version() {
     local -r version="0.1.0"
     (
         cd "$SCRIPT_PATH"
-        if git tag --points-at HEAD | grep -q "^$version\$"; then
+        if git tag --points-at HEAD | grep -Fxq "$version"; then
             # At pinned version.
             echo "zero.sh $version"
         else
