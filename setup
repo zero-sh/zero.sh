@@ -137,7 +137,7 @@ self_update() {
                 print_run_cmd git checkout "$latest_tag"
                 puts "Updated. Re-invoking script."
                 "$SCRIPT_PATH"/setup "$@"
-                exit 0
+                exit
             else
                 echo "Skipping."
             fi
@@ -158,7 +158,7 @@ system_update() {
         grep -Fq "$update_needle"; then
         if tty::confirm "Install system updates? This will restart your machine if necessary."; then
             print_run_cmd sudo softwareupdate --install --all --restart
-            exit 0
+            exit
         else
             echo >&2 "Aborting."
             exit 1
