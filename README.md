@@ -146,7 +146,7 @@ $ git submodule add https://github.com/zero-sh/zero.sh zero
 Then, to pin to the latest stable version, run:
 
 ```sh
-git submodule update --init --remote --reference 0.1.0 zero 
+git submodule update --init --remote --reference 0.1.1 zero
 git commit
 ```
 

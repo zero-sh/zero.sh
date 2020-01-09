@@ -14,7 +14,7 @@ readonly SCRIPT_PATH CONFIG_PATH
 source "$SCRIPT_PATH/lib/termui.sh"
 
 show_version() {
-    local -r version="0.1.0"
+    local -r version="0.1.1"
     (
         cd "$SCRIPT_PATH"
         if git tag --points-at HEAD | grep -Fxq "$version"; then
