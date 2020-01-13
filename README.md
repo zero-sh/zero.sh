@@ -8,9 +8,9 @@ This lets you to restore a machine without having to deal with the mess that was
 the state of a previous installation, or painstakingly babysit the process
 step-by-step.
 
-Unlike other solutions, this approach is extremely simple. It is just a short
-shell script with a pre-defined directory structure. No configuration files or
-custom commands are necessary.
+Unlike other solutions, this approach is extremely simple. It's just a short,
+self-contained script with a pre-defined directory structure. No configuration
+files or custom commands are necessary.
 
 ## Usage
 
@@ -37,7 +37,11 @@ privileges. Each of these will be printed before running.
 
 The setup script will do the following, in order:
 
-1. Check for system and application updates.
+1. Check for system and application updates via
+   [`softwareupdate`](https://tldr.ostera.io/osx/softwareupdate),
+   [`brew`](https://brew.sh/), [`brew
+   cask`](https://github.com/Homebrew/homebrew-cask), and
+   [`mas`](https://github.com/mas-cli/mas).
 2. Install packages and applications via [Homebrew
    Bundle](https://github.com/Homebrew/homebrew-bundle).
 3. Run any scripts under `run/before` in alphabetical order.
@@ -66,7 +70,7 @@ $ update
 
 Initially, this was encapsulated in a Python library called
 [Cider](https://github.com/msanders/cider), but now that Homebrew added back
-Brewfile support it has been migrated to this simple shell script and directory
+Brewfile support it has been migrated to this simple Swift script and directory
 structure instead.
 
 The directory structure in `~/.dotfiles` (or wherever you choose to store it) is
@@ -120,17 +124,17 @@ It can also recurse, for example:
 
 This describes three workspaces, `home.desktop`, and `home.laptop`, and `work`.
 
-It will run the same series of steps as before, but in each one first apply the
-step described in `shared` of the parent or sister directory. For example, when
+It will run the same series of steps as before, but first setup the workspace
+described in `shared` of the parent or sister directory. For example, when
 running `zero/setup home.desktop`, it will do the following:
 
 1. Check for system and application updates.
-2. Install packages and applications via Homebrew or the system package manager.
-    - First in `workspaces/shared`, then in `workspaces/home/workspaces/shared`,
-      then in `workspaces/home/workspaces/desktop`.
-3. Run any scripts under `run/before` in alphabetical order.
-    - First in `workspaces/shared`, then in `workspaces/home/workspaces/shared`,
-      then in `workspaces/home/workspaces/desktop`.
+2. For each workspace in `workspaces/shared`, followed by in
+      `workspaces/home/workspaces/shared`, then
+      `workspaces/home/workspaces/desktop`:
+   - Install packages and applications via Homebrew Bundle.
+   - Run any scripts under `run/before` in alphabetical order.
+   - Apply system defaults described in `defaults.yml` via apply-user-defaults.
 
 ... etc., for each of the steps listed above.
 
@@ -164,9 +168,9 @@ To see how this works out in practice, here are some repos that use `zero.sh`:
 
 ## Roadmap & missing features
 
-- Linux/Unix support. This should be pretty straightforward, but requires
-  accounting for additional system update tools and package managers that I
-  haven't had time for yet.
+- Linux support. This should be pretty straightforward, but requires accounting
+  for additional system update tools and package managers that I haven't had
+  time for yet. It will also be limited to distributions that support Swift.
 
 - Currently it's not possible to specify a target for symlinks; they are just
   all expanded to the home directory, matching the nested directory structure
@@ -176,10 +180,6 @@ To see how this works out in practice, here are some repos that use `zero.sh`:
 - GNU Stow is a neat tool, but doesn't offer the same level of utility or error
   handling that Cider previously did. It would be nice to offer a more modern
   alternative.
-  
-- It will probably be necessary to migrate from bash to zsh or `/bin/sh` (or
-  perhaps a Swift script) at some point, now that bash is deprecated on macOS
-  Catalina.
 
 **Note**: `zero.sh` is a work-in-progress, but it's fairly well-tested and
 should be kind to your machine.
@@ -194,6 +194,7 @@ These dependencies are required & installed when running the setup script:
   installed via Homebrew.
 - [`mas`](https://github.com/mas-cli/mas) installed via Homebrew.
 - [`stow`](https://www.gnu.org/software/stow/) installed via Homebrew.
+- [`swift-sh`](https://github.com/mxctl/swift-sh) installed via Homebrew.
 
 ## Non-Goals
 
