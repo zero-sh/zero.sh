@@ -1,6 +1,10 @@
-language: minimal
+language: swift
 os: osx
+osx_image: xcode10.2
 before_install:
-  - brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/d298ead/Formula/shellcheck.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/e49548cbdf6aed9ec715613ba38fcdd389abd9fc/Formula/shellcheck.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/850ae1b380fd27dc034aff30e228cea50913cdff/Formula/shfmt.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/203436f8567a3b6455264a1d896da5b1df1e50e6/Formula/swiftlint.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/f5a222650aa77997e1b1195e6eb4998555ca19e6/Formula/swiftformat.rb
 script:
-  - ./ci/lint
+  - ./script/lint

@@ -1,0 +1,9 @@
+line_length:
+  ignores_comments: false
+  ignores_function_declarations: false
+  ignores_interpolated_strings: false
+  warning: 100
+trailing_comma:
+  mandatory_comma: true
+disabled_rules:
+  - file_length
