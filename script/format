@@ -7,9 +7,12 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     cd "$SCRIPT_DIR/.."
 
     echo "Running shfmt..."
-    shfmt -s -i=4 -ci -ln=posix -w .
+    shfmt -f . | grep -v "^\." | while read -r fname; do
+        echo "Formatting $fname"
+        shfmt -s -i=4 -ci -ln=posix -w "$fname"
+    done
     echo "Done running shfmt."
 
-    swiftlint autocorrect --format .
-    swiftformat .
+    swiftlint autocorrect --format Package.swift Sources
+    swiftformat Package.swift Sources
 )

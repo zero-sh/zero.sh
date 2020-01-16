@@ -8,38 +8,39 @@ This lets you to restore a machine without having to deal with the mess that was
 the state of a previous installation, or painstakingly babysit the process
 step-by-step.
 
-Unlike other solutions, this approach is extremely simple. It's just a short,
-self-contained script with a pre-defined directory structure. No configuration
-files or custom commands are necessary.
+Unlike other solutions, this approach is extremely simple. It's just a small
+tool with a pre-defined directory structure. No additional configuration files
+or complex commands are necessary.
 
 ## Usage
 
 Instead, just run the following:
 
 ```sh
-# Clone your configuration repo wherever you like. For example:
-$ git clone --recursive https://github.com/{you}/{your-repo} ~/.dotfiles
+# Clone your configuration repo to your preferred location. For example:
+git clone --recursive <YOUR_REPO> ~/.dotfiles
 
-# Run this script, typically included as a submodule.
-#
 # If on a new machine, once finished, restart and run again to ensure system 
 # settings are applied correctly.
-$ ~/.dotfiles/zero/setup
+zero setup
 ```
 
 ... and you'll be back up and running, with all of your applications and command
 line utilities re-installed (and configurations restored).
+
+**Note**: By default, `zero` assumes your configuration directory is located in
+`~/.dotfiles`. This can be changed with the `--directory` flag.
 
 ## 
 
 During setup, you may be asked for your password as some commands require admin
 privileges. Each of these will be printed before running.
 
-The setup script will do the following, in order:
+The `setup` command will do the following, in order:
 
 1. Check for system and application updates via
    [`softwareupdate`](https://tldr.ostera.io/osx/softwareupdate),
-   [`brew`](https://brew.sh/), [`brew
+   [`brew`](https://brew.sh), [`brew
    cask`](https://github.com/Homebrew/homebrew-cask), and
    [`mas`](https://github.com/mas-cli/mas).
 2. Install packages and applications via [Homebrew
@@ -50,27 +51,19 @@ The setup script will do the following, in order:
 5. Symlink configuration files listed under `symlinks` to the home directory.
 6. Run the remaining scripts under `run/after` in alphabetical order.
 
-This script is idempotent, and can be safely invoked again to update tools
-and ensure everything has been installed correctly.
+This command is idempotent, and can be safely invoked again to update tools and
+ensure everything has been installed correctly.
 
 It will **not** wipe over files that already exist when symlinking or at any
 other point in the process, aside from what is done by system upgrade tools or
 in your own custom before & after scripts.
 
-In addition, there is **no magic** done in this script. Each command is printed
+In addition, there is **no magic** done by this tool. Each command is printed
 before it is run.
-
-If you'd like, you can write an alias so you can invoke this at any time to
-apply updates to all tools on your system:
-
-```sh
-$ alias update="$HOME/.dotfiles/zero/setup"
-$ update
-```
 
 Initially, this was encapsulated in a Python library called
 [Cider](https://github.com/msanders/cider), but now that Homebrew added back
-Brewfile support it has been migrated to this simple Swift script and directory
+Brewfile support it has been migrated to this simple utility and directory
 structure instead.
 
 The directory structure in `~/.dotfiles` (or wherever you choose to store it) is
@@ -87,7 +80,6 @@ expected to look like this:
         => [ ... executable scripts ... ]
     -> after/
         => [ ... executable scripts ... ]
-- zero/ # Submodule pointing to zero.sh repo.
 ```
 
 ## Workspaces
@@ -138,25 +130,74 @@ running `zero/setup home.desktop`, it will do the following:
 
 ... etc., for each of the steps listed above.
 
+## Additional features
+
+Zero also supports running any of the above steps independently.
+
+```
+Usage: zero <command> [options]
+
+Radically simple personal bootstrapping tool for macOS.
+
+Commands:
+  setup             Setup a workspace, or directory if none is given
+  update            Check for system and application updates
+  bundle            Run brew bundle on a workspace
+  apply-defaults    Apply user defaults for a workplace
+  apply-symlinks    Apply symlinks for a workplace
+  run-scripts       Run before & after scripts for a workplace
+  help              Prints help information
+  version           Prints the current version of this app
+```
+
 ## Installation
 
-It's recommended to integrate this script as a submodule:
+### Homebrew
+
+[Homebrew](https://brew.sh) is the preferred way to install:
 
 ```sh
-$ cd ~/.your-dotfile-repo
+$ brew install zero-sh/tap/zero-sh
+```
+
+Alternatively, pre-compiled binaries are available on the [releases
+page](https://github.com/zero-sh/preferences/releases).
+
+### Submodule
+
+Since `zero` requires Homebrew for installation, it needs a [helper
+script](setup) for the initial setup. This repo contains one that can either be
+copied or included as a submodule:
+
+```sh
+$ cd ~/.dotfiles
 $ git submodule add https://github.com/zero-sh/zero.sh zero
 ```
 
 Then, to pin to the latest stable version, run:
 
 ```sh
-git submodule update --init --remote --reference 0.1.1 zero
+git submodule update --init --remote --reference {VERSION} zero
 git commit
 ```
 
+Now when bootstrapping your new machine, you can simply run:
+
+```sh
+git clone --recursive <YOUR_REPO> ~/.dotfiles
+~/.dotfiles/zero/setup
+```
+
+This gives you a single script that can be used to fully setup your new
+machine.
+
+It is equivalent to running the `zero setup` command (and will accept any
+respective arguments, e.g. workspaces), only it first installs Homebrew and
+`zero`. Just like `zero setup`, it is idempotent and can be safely run again.
+
 Note that it may be necessary run `git submodule update --init` later when
-pulling in this change into an existing repo, unless the `--recursive` flag is
-included when cloning as shown above.
+pulling in the new submodule into an existing repo, unless the `--recursive`
+flag is included when cloning as shown above.
 
 ## Working examples
 
@@ -186,7 +227,7 @@ should be kind to your machine.
 
 ## Dependencies
 
-These dependencies are required & installed when running the setup script:
+These dependencies are required & installed when running `zero`:
 
 - Xcode Command Line Tools.
 - [Homebrew](https://brew.sh).
@@ -194,21 +235,16 @@ These dependencies are required & installed when running the setup script:
   installed via Homebrew.
 - [`mas`](https://github.com/mas-cli/mas) installed via Homebrew.
 - [`stow`](https://www.gnu.org/software/stow/) installed via Homebrew.
-- [`swift-sh`](https://github.com/mxctl/swift-sh) installed via Homebrew.
 
 ## Non-Goals
 
-This tool is intended to be a very minimal approach to system configuration. If
-you are looking for something more full-featured, e.g. that provides a
-comprehensive CLI or complex features for managing many machines at once, there
-are other solutions available. In my experience just dealing with my own
-machines, this was all that was necessary.
+This tool is intended to be a very minimal approach to personal system
+configuration. If you are looking for something more full-featured, e.g. that
+provides a complex CLI or additional features for managing many machines at
+once, there are other solutions available. In my experience just dealing with
+my own machines, this was all that was necessary.
 
-If you do decide to go with something else (or your own bootstrap script), there
-will only be one file to replace. This doesn't install anything outside of the
-cloned directory aside from the few dependencies listed above.
-
-## Contributions
+## Contributing
 
 If you are interested in this project, please consider contributing. Here are a
 few ways you can help:

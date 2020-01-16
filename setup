@@ -1,67 +1,20 @@
 #!/bin/sh
 #
-# Radically simple zero-file configuration management for macOS.
+# Radically simple personal bootstrapping tool for macOS.
 # https://github.com/zero-sh/zero.sh
 set -o errexit -o nounset
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG_DIR="$SCRIPT_DIR/.."
-VERSION="0.1.1"
 
-# shellcheck source=lib/termui.sh
-. "$SCRIPT_DIR/lib/termui.sh"
+if ! command -v brew >/dev/null; then
+    echo "Installing Homebrew..."
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
 
-show_version() {
-    (
-        cd "$SCRIPT_DIR"
-        if git tag --points-at HEAD | grep -Fxq "$VERSION"; then
-            # At pinned VERSION.
-            echo "zero.sh $VERSION"
-        else
-            # For untagged checkouts, just list the commit date and a sha.
-            date="$(git show -s --format=%ci HEAD)"
-            sha="$(git rev-parse --short HEAD)"
-            echo "zero.sh $date $sha (alpha)"
-        fi
-    )
-}
+export PATH="/usr/local/bin:$PATH"
+if ! command -v zero >/dev/null; then
+    echo "Installing Zero..."
+    brew install zero-sh/tap/zero-sh
+fi
 
-show_usage() {
-    cat <<USAGE
-Usage: setup [<workspace>]
-
-Setup the given workspace, or the outer directory if none is given. This is
-expected to exist as the parent directory of this script.
-USAGE
-}
-
-main() {
-    # Usage is implemented in shell so it is possible to run before any
-    # dependencies are installed.
-    for i; do
-        case $i in
-            --help | -h)
-                show_version
-                show_usage
-                exit
-                ;;
-            --version | -V)
-                show_version
-                exit
-                ;;
-        esac
-    done
-
-    export PATH="/usr/local/bin:$PATH"
-    if ! command -v brew >/dev/null; then
-        putprogress "Installing Homebrew..."
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    fi
-    if ! command -v swift-sh >/dev/null; then
-        print_run_cmd brew install mxcl/made/swift-sh
-    fi
-
-    /usr/bin/swift sh "$SCRIPT_DIR/Sources/main.swift" "$CONFIG_DIR" "$@"
-}
-
-main "$@"
+zero setup "$@" --directory "$SCRIPT_DIR"

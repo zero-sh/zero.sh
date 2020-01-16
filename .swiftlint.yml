@@ -5,5 +5,3 @@ line_length:
   warning: 100
 trailing_comma:
   mandatory_comma: true
-disabled_rules:
-  - file_length
