@@ -23,7 +23,7 @@ extension ZeroRunner {
 private extension ZeroRunner {
     /// Check and apply system updates via `softwareupdate` CLI.
     static func systemUpdate() throws {
-        Term.stdout <<< TTY.progress("Checking for system updates...")
+        Term.stdout <<< TTY.progressMessage("Checking for system updates...")
 
         // `NSUnbufferedIO` forces output of `softwareupdate` to be unbuffered
         // so it's printed as it's being run, rather than when it completes.
@@ -60,7 +60,7 @@ private extension ZeroRunner {
 
     /// Check and apply app store updates.
     static func appStoreUpdate() throws {
-        Term.stdout <<< TTY.progress("Upgrading apps from the App Store...")
+        Term.stdout <<< TTY.progressMessage("Upgrading apps from the App Store...")
         try Task.run("mas", "upgrade")
     }
 }

@@ -3,15 +3,15 @@ import Rainbow
 import SwiftCLI
 
 enum TTY {
-    static func error(_ msg: String) -> String {
+    static func errorMessage(_ msg: String) -> String {
         String(format: "%@: %@", "Error".applyingCodes(Color.red), msg)
     }
 
-    static func success(_ msg: String) -> String {
+    static func successMessage(_ msg: String) -> String {
         String(format: "%@ %@", "Success!".applyingCodes(Color.green, Style.underline), msg)
     }
 
-    static func progress(_ msg: String) -> String {
+    static func progressMessage(_ msg: String) -> String {
         String(
             format: "%@ %@",
             "==>".applyingCodes(Color.blue, Style.bold),
@@ -19,11 +19,11 @@ enum TTY {
         )
     }
 
-    static func command(_ msg: String) -> String {
+    static func commandMessage(_ msg: String) -> String {
         String(format: "%@ %@", "==>".applyingCodes(Color.yellow, Style.bold), msg)
     }
 
-    static func bold(_ msg: String) -> String {
+    static func boldMessage(_ msg: String) -> String {
         msg.applyingCodes(Color.yellow, Style.bold)
     }
 }
@@ -42,7 +42,7 @@ extension Input {
             prompt: prompt + suffix,
             defaultValue: defaultValue,
             errorResponse: { _, _ in
-                Term.stderr <<< TTY.error("Invalid input.")
+                Term.stderr <<< TTY.errorMessage("Invalid input.")
             }
         )
     }

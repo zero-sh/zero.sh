@@ -21,7 +21,7 @@ extension ZeroRunner {
             return
         }
 
-        Term.stdout <<< TTY.progress("Applying defaults...")
+        Term.stdout <<< TTY.progressMessage("Applying defaults...")
 
         // Close any open System Preferences panes, to prevent them from
         // overriding settings we’re about to change.

@@ -23,6 +23,6 @@ public enum Zero {
 
 struct ZeroHelpMessageGenerator: HelpMessageGenerator {
     func writeErrorLine(for message: String, to out: WritableStream) {
-        out <<< TTY.error(message)
+        out <<< TTY.errorMessage(message)
     }
 }

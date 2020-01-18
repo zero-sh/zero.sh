@@ -52,8 +52,11 @@ private extension ZeroRunner {
     /// Run setup commands in the given directory.
     func setup(directory: Path) throws {
         if directory != configDirectory {
-            Term.stdout <<< TTY.bold("Setting up \(directory.relative(to: configDirectory)).")
+            Term.stdout <<< TTY.boldMessage(
+                "Setting up \(directory.relative(to: configDirectory))."
+            )
         }
+
         try bundle(directory: directory)
         try runScripts(directory: directory, suffix: .before)
         try applyDefaults(directory: directory)

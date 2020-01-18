@@ -43,7 +43,7 @@ struct ZeroRunner {
     /// running.
     func runTask(_ executable: String, _ arguments: String..., at directory: Path? = nil) throws {
         let escapedCommand: [String] = [executable] + arguments.map(Task.escapeArgument)
-        Term.stdout <<< TTY.command(escapedCommand.joined(separator: " "))
+        Term.stdout <<< TTY.commandMessage(escapedCommand.joined(separator: " "))
 
         if let directory = directory, executable.hasPrefix(".") {
             // Process.launchPath doesn't seem to honor currentDirectoryPath

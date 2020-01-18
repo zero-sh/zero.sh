@@ -23,7 +23,7 @@ extension ZeroRunner {
             return
         }
 
-        Term.stdout <<< TTY.progress("Applying symlinks...")
+        Term.stdout <<< TTY.progressMessage("Applying symlinks...")
         for link in symlinks {
             try runTask(
                 "stow",
@@ -35,6 +35,6 @@ extension ZeroRunner {
                 at: symlinkDirectory
             )
         }
-        Term.stdout <<< TTY.success("Applied symlinks.")
+        Term.stdout <<< TTY.successMessage("Applied symlinks.")
     }
 }

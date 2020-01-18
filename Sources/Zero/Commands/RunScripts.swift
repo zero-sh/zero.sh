@@ -25,7 +25,7 @@ enum ZeroScriptSuffix: String {
 extension ZeroRunner {
     /// Run scripts in the given directory, contained in `run/{suffix}`.
     func runScripts(directory: Path, suffix: ZeroScriptSuffix) throws {
-        Term.stdout <<< TTY.progress("Running scripts in run/\(suffix.rawValue)")
+        Term.stdout <<< TTY.progressMessage("Running scripts in run/\(suffix.rawValue)")
         let scriptDirectory = directory.join("run").join(suffix.rawValue)
         let scripts: [Path] = !scriptDirectory.exists ? [] : try scriptDirectory.ls().paths.sorted()
         guard !scripts.isEmpty else {
