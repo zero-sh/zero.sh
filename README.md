@@ -163,6 +163,19 @@ $ brew install zero-sh/tap/zero-sh
 Alternatively, pre-compiled binaries are available on the [releases
 page](https://github.com/zero-sh/preferences/releases).
 
+### Building from source
+
+To build from source, run:
+
+```
+$ git clone https://github.com/zero-sh/zero.sh.git zero
+$ cd zero
+$ make archive
+# make install
+```
+
+To develop locally, instead use `swift run zero`.
+
 ### Submodule
 
 Since `zero` requires Homebrew for installation, it needs a [helper
