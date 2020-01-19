@@ -11,6 +11,9 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
-[{setup,*.sh}]
-shell_variant = bash
+[*.swift]
+max_line_length = 100
+
+[*.sh]
+shell_variant = posix
 switch_case_indent = true

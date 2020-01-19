@@ -1,0 +1,28 @@
+#!/bin/sh
+set -o errexit -o nounset
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+(
+    cd "$SCRIPT_DIR/.."
+
+    # Workaround for https://github.com/mvdan/sh/issues/288.
+    files="$(shfmt -f . | grep -v "^\.")"
+
+    echo "Running shellcheck..."
+    echo "$files" | while read -r fname; do
+        echo "Checking $fname"
+        shellcheck "$fname" --external-sources --source-path SCRIPTDIR
+    done
+    echo "Done running shellcheck."
+
+    echo "Running shfmt..."
+    echo "$files" | while read -r fname; do
+        echo "Checking $fname"
+        shfmt -s -i=4 -ci -ln=posix -d "$fname"
+    done
+    echo "Done running shfmt."
+
+    swiftlint lint --strict Package.swift Sources
+    swiftformat --lint Package.swift Sources
+)

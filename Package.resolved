@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Path.swift",
+        "repositoryURL": "https://github.com/mxcl/Path.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "dac007e907a4f4c565cfdc55a9ce148a761a11d5",
+          "version": "0.16.3"
+        }
+      },
+      {
+        "package": "Rainbow",
+        "repositoryURL": "https://github.com/onevcat/Rainbow.git",
+        "state": {
+          "branch": null,
+          "revision": "9c52c1952e9b2305d4507cf473392ac2d7c9b155",
+          "version": "3.1.5"
+        }
+      },
+      {
+        "package": "SwiftCLI",
+        "repositoryURL": "https://github.com/msanders/SwiftCLI.git",
+        "state": {
+          "branch": "6.0.1-zero.sh",
+          "revision": "3984ba73adb4d2aa0ed6321bfc90551bcf3f0cc5",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
