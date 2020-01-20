@@ -1,13 +1,18 @@
 #!/bin/sh
 set -o errexit -o nounset
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ARCHIVE_DIR="./archive"
 
 build_release_target() {
     echo "Building target for release..."
 
     set -x
-    swift build -c release -Xswiftc -Osize
+
+    # Sandbox must be disabled for Homebrew builds. See
+    # https://github.com/yonaskolb/XcodeGen/issues/51#issuecomment-331615462
+    swift build -c release -Xswiftc -Osize ${DISABLE_SANDBOX:+--disable-sandbox}
+
     mkdir -p "$ARCHIVE_DIR"
     cp .build/release/zero "$ARCHIVE_DIR"
     strip "$ARCHIVE_DIR/zero"
@@ -16,23 +21,24 @@ build_release_target() {
     echo "Successfully built target."
 }
 
+generate_completions() {
+    echo "Generating completions..."
+    mkdir -p "$ARCHIVE_DIR/complete"
+    OUT_DIR="$ARCHIVE_DIR/complete" swift run generate-completions
+}
+
 package() {
     (
         echo "Preparing new package..."
-
-        completion_out_dir="$(mktemp -d -t zero-sh-completions)"
-        OUT_DIR="$completion_out_dir" swift run generate-completions
 
         version="$("$ARCHIVE_DIR"/zero --version | sed 's/^Version: //')"
         package_name="zero-$version"
         package_dir="$ARCHIVE_DIR/$package_name"
 
         mkdir -p "$package_dir"
-        mkdir -p "$package_dir/complete"
         cp "archive/zero" "$package_dir/"
         cp CHANGELOG.md README.md LICENSE "$package_dir/"
-
-        cp "$completion_out_dir/_zero" "$package_dir/complete/"
+        cp -R "$ARCHIVE_DIR/complete" "$package_dir/"
 
         tar czvf "$ARCHIVE_DIR/$package_name.tar.gz" --options compression-level=9 "$package_dir"
 
@@ -42,11 +48,15 @@ package() {
 }
 
 main() {
-    build_release_target
+    (
+        cd "$SCRIPT_DIR/.."
+        build_release_target
+        generate_completions
 
-    if [ "${1:-}" = "--package" ]; then
-        package
-    fi
+        if [ "${1:-}" = "--package" ]; then
+            package
+        fi
+    )
 }
 
 main "$@"
