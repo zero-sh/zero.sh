@@ -1,10 +1,25 @@
 language: swift
 os: osx
-osx_image: xcode10.2
+osx_image: xcode11.1
 before_install:
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/e49548cbdf6aed9ec715613ba38fcdd389abd9fc/Formula/shellcheck.rb
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/850ae1b380fd27dc034aff30e228cea50913cdff/Formula/shfmt.rb
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/203436f8567a3b6455264a1d896da5b1df1e50e6/Formula/swiftlint.rb
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/f5a222650aa77997e1b1195e6eb4998555ca19e6/Formula/swiftformat.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/e35ce54c65408e4386f82dec286805d6c7110269/Formula/swiftformat.rb
 script:
   - ./script/lint
+  - make
+before_deploy:
+  - git config --local user.name "Michael Sanders"
+  - git config --local user.email "michael.sanders@fastmail.com"
+  - ./script/archive --package
+deploy:
+  provider: releases
+  api_key:
+    secure: jVV05OQTvw0GEmhCeKD2eKlYY3F7cy9fonE1YI5TqMrujShnf/ghIk9yFfZgN9InrVbIZziAUGp2eiZWBra88ip6ZOy/i/PVz6lhL0SWUi4aasLSBRgIKWiWqTMR+7LzC/bRnDKGMQYlc/s/lxC8ahtbUXGjkJv5nVuRUtJlnu8E0jKx4zPr3fkw8qvpHpcvqv3J4xt3ogwb5xmntM9qQEI3J/crgopHwSVWdoYAVxK8A0jAtKtws/cSdJMIDGEBUxCd3AsZZhzk5XT/QFZZZHuAT39ZrtfsSZBlpqPsTg942ejMb6EbnigpqA52kgVPYPWujS8cHgpgIVDwoeTO1GG6LX+zzwYbr/ooJJRo7jnNCXJOPcqNI8U7oN0JqQ0iWNKKe7Y3GNL2gm2tKMsLqKvaNia85OoecLMsm3EHWo+QCnfZf/buFHHQ+lpKGQH++Z6JIDXRL+oTo9MB23BO18kzE+ZxQGcfoBBrysGO+mEZ+4IUf+IipcyV4ySJW6h4nq+7Ecq+kR7I3TcU1N2EhEhrdnDfaL0bX+87ksNzy0V4dBeg3rG4eJMshshVfJP1u9z7hs5sKY/nsT6eKEny5pozPMAO/Sx4d1MdxpJ2XjbtuM76hefSld2KYgq0OAGao9wRcAuvqpqg24PDRfGyyypVf/eojE94ufS137hFXw0=
+  file: ./archive/zero-$TRAVIS_TAG.tar.gz
+  skip_cleanup: true
+  on:
+    master: true
+    repo: zero-sh/zero.sh
+    tags: true
