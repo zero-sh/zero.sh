@@ -163,6 +163,19 @@ $ brew install zero-sh/tap/zero-sh
 Alternatively, pre-compiled binaries are available on the [releases
 page](https://github.com/zero-sh/preferences/releases).
 
+### Building from source
+
+To build from source, run:
+
+```
+$ git clone https://github.com/zero-sh/zero.sh.git zero
+$ cd zero
+$ make archive
+# make install
+```
+
+To develop locally, instead use `swift run zero`.
+
 ### Submodule
 
 Since `zero` requires Homebrew for installation, it needs a [helper
@@ -227,14 +240,16 @@ should be kind to your machine.
 
 ## Dependencies
 
-These dependencies are required & installed when running `zero`:
+The following dependencies are required & installed when building the brew
+formula:
 
-- Xcode Command Line Tools.
-- [Homebrew](https://brew.sh).
 - [`apply-user-defaults`](https://github.com/zero-sh/apply-user-defaults)
   installed via Homebrew.
 - [`mas`](https://github.com/mas-cli/mas) installed via Homebrew.
 - [`stow`](https://www.gnu.org/software/stow/) installed via Homebrew.
+
+In addition, [Homebrew](https://brew.sh) and Xcode Command Line Tools are
+required.
 
 ## Non-Goals
 
