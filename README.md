@@ -1,11 +1,15 @@
-[![Build Status](https://travis-ci.org/zero-sh/zero.sh.svg?branch=master)](https://travis-ci.org/zero-sh/zero.sh)
+[![Build Status](https://img.shields.io/travis/zero-sh/zero.sh/master?style=flat-square)][CI]
+[![Latest Release](https://img.shields.io/github/v/release/zero-sh/zero.sh?sort=semver&style=flat-square)][Release]
+
+[CI]: https://travis-ci.org/zero-sh/zero.sh
+[Release]: https://github.com/zero-sh/zero.sh/releases
 
 ## Zero.sh - Start with a clean slate
 
 #### Create an identical installation on any Mac with a single command.
 
-This lets you to restore a machine without having to deal with the mess that was
-the state of a previous installation, or painstakingly babysit the process
+This lets you to restore a machine without having to deal with the mess that
+was the state of a previous installation, or painstakingly babysit the process
 step-by-step.
 
 Unlike other solutions, this approach is extremely simple. It's just a small
@@ -25,8 +29,8 @@ git clone --recursive <YOUR_REPO> ~/.dotfiles
 zero setup
 ```
 
-... and you'll be back up and running, with all of your applications and command
-line utilities re-installed (and configurations restored).
+... and you'll be back up and running, with all of your applications and
+command line utilities re-installed (and configurations restored).
 
 **Note**: By default, `zero` assumes your configuration directory is located in
 `~/.dotfiles`. This can be changed with the `--directory` flag.
@@ -39,17 +43,21 @@ privileges. Each of these will be printed before running.
 The `setup` command will do the following, in order:
 
 1. Check for system and application updates via
-   [`softwareupdate`](https://tldr.ostera.io/osx/softwareupdate),
-   [`brew`](https://brew.sh), [`brew
-   cask`](https://github.com/Homebrew/homebrew-cask), and
-   [`mas`](https://github.com/mas-cli/mas).
-2. Install packages and applications via [Homebrew
-   Bundle](https://github.com/Homebrew/homebrew-bundle).
+   [`softwareupdate`][softwareupdate], [`brew`][brew], [`brew cask`][brew
+   cask], and [`mas`][mas].
+2. Install packages and applications via [Homebrew Bundle].
 3. Run any scripts under `run/before` in alphabetical order.
 4. Apply system defaults described in `defaults.yml` via
-   [apply-user-defaults](https://github.com/zero-sh/apply-user-defaults).
+   [`apply-user-defaults`][apply-user-defaults].
 5. Symlink configuration files listed under `symlinks` to the home directory.
 6. Run the remaining scripts under `run/after` in alphabetical order.
+
+[softwareupdate]: https://tldr.ostera.io/osx/softwareupdate
+[brew]: https://brew.sh
+[brew cask]: https://github.com/Homebrew/homebrew-cask
+[mas]: https://github.com/mas-cli/mas
+[Homebrew Bundle]: https://github.com/Homebrew/homebrew-bundle
+[apply-user-defaults]: https://github.com/zero-sh/apply-user-defaults
 
 This command is idempotent, and can be safely invoked again to update tools and
 ensure everything has been installed correctly.
@@ -66,8 +74,8 @@ Initially, this was encapsulated in a Python library called
 Brewfile support it has been migrated to this simple utility and directory
 structure instead.
 
-The directory structure in `~/.dotfiles` (or wherever you choose to store it) is
-expected to look like this:
+The directory structure in `~/.dotfiles` (or wherever you choose to store it)
+is expected to look like this:
 
 ```
 - Brewfile # Homebrew Bundle dependency file.
@@ -161,7 +169,7 @@ $ brew install zero-sh/tap/zero-sh
 ```
 
 Alternatively, pre-compiled binaries are available on the [releases
-page](https://github.com/zero-sh/preferences/releases).
+page](https://github.com/zero-sh/zero.sh/releases).
 
 ### Building from source
 
@@ -271,11 +279,13 @@ few ways you can help:
 
 ## Inspiration
 
-This is partly inspired by [@gerhard's setup](https://github.com/gerhard/setup),
-in addition to [this blog
-post](http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html)
-on GNU Stow by Brandon Invergo. It is structurally based on (and the spiritual
-successor to) [Cider](https://github.com/msanders/cider).
+This is partly inspired by [@gerhard's setup][1], in addition to [this blog
+post][2] on GNU Stow by Brandon Invergo. It is structurally based on (and the
+spiritual successor to) [Cider][3].
+
+[1]: https://github.com/gerhard/setup
+[2]: http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html
+[3]: https://github.com/msanders/cider
 
 ## License
 
