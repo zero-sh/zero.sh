@@ -40,9 +40,10 @@ package() {
         cp CHANGELOG.md README.md LICENSE "$package_dir/"
         cp -R "$ARCHIVE_DIR/complete" "$package_dir/"
 
-        tar czvf "$ARCHIVE_DIR/$package_name.tar.gz" --options compression-level=9 "$package_dir"
+        cd "$ARCHIVE_DIR"
+        tar czvf "./$package_name.tar.gz" --options compression-level=9 "$package_name"
 
-        sha="$(shasum -a 256 "$ARCHIVE_DIR/$package_name.tar.gz" | sed 's/ .*//')"
+        sha="$(shasum -a 256 "./$package_name.tar.gz" | sed 's/ .*//')"
         echo "Package SHA: $sha"
     )
 }
