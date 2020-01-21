@@ -34,7 +34,8 @@ struct ZeroRunner {
     let workspace: Workspace
 
     init(configDirectory: Path? = nil, workspace: Workspace) throws {
-        self.configDirectory = configDirectory ?? Path.home.join(".dotfiles")
+        self.configDirectory = configDirectory ?? Path.XDG.configHome?.join("dotfiles") ??
+            Path.home.join(".dotfiles")
         self.workspace = workspace
         try validate()
     }
