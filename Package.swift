@@ -9,7 +9,7 @@ package.products = [
     .executable(name: "zero", targets: ["main"]),
 ]
 package.dependencies = [
-    .package(url: "https://github.com/mxcl/Path.swift.git", .upToNextMajor(from: "0.16.3")),
+    .package(url: "https://github.com/mxcl/Path.swift.git", .upToNextMajor(from: "1.0.0")),
     .package(url: "https://github.com/onevcat/Rainbow.git", .upToNextMajor(from: "3.1.5")),
     .package(url: "https://github.com/msanders/SwiftCLI.git", .branch("6.0.1-zero.sh")),
 ]

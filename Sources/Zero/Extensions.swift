@@ -20,12 +20,6 @@ extension Path {
     static let XDG: XDGBaseDirectory = .init()
 }
 
-extension Array where Element == Entry {
-    var paths: [Path] {
-        map { $0.path }
-    }
-}
-
 extension Path: ConvertibleFromString {
     public init?(input: String) {
         self = Path(input) ?? Path.cwd.join(input)

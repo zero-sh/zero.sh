@@ -27,7 +27,7 @@ extension ZeroRunner {
     func runScripts(directory: Path, suffix: ZeroScriptSuffix) throws {
         Term.stdout <<< TTY.progressMessage("Running scripts in run/\(suffix.rawValue)")
         let scriptDirectory = directory.join("run").join(suffix.rawValue)
-        let scripts: [Path] = !scriptDirectory.exists ? [] : try scriptDirectory.ls().paths.sorted()
+        let scripts: [Path] = !scriptDirectory.exists ? [] : scriptDirectory.ls().sorted()
         guard !scripts.isEmpty else {
             Term.stdout <<< "No scripts found."
             return

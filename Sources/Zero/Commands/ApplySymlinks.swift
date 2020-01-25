@@ -18,7 +18,7 @@ extension ZeroRunner {
     /// Applies symlinks contained in `symlinks` folder in the given directory.
     func applySymlinks(directory: Path) throws {
         let symlinkDirectory = directory.join("symlinks")
-        let symlinks: [Path] = !symlinkDirectory.exists ? [] : try symlinkDirectory.ls().paths
+        let symlinks: [Path] = !symlinkDirectory.exists ? [] : symlinkDirectory.ls()
         guard !symlinks.isEmpty else {
             return
         }
