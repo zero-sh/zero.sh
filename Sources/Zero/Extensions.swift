@@ -12,7 +12,6 @@ struct XDGBaseDirectory {
         return Path(input) ?? Path.cwd.join(input)
     }
 
-    // swiftformat:disable:this redundantFileprivate
     fileprivate init() {}
 }
 
