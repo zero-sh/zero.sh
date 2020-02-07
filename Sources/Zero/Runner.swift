@@ -34,8 +34,12 @@ struct ZeroRunner {
     let workspace: Workspace
 
     init(configDirectory: Path? = nil, workspace: Workspace) throws {
-        self.configDirectory = configDirectory ?? Path.XDG.configHome?.join("dotfiles") ??
-            Path.home.join(".dotfiles")
+        let fallbackDirectories: [Path] = [
+            Path.XDG.configHome.join("zero").join("dotfiles"),
+            Path.home.join(".dotfiles"),
+        ]
+        self.configDirectory = configDirectory ?? fallbackDirectories.first { $0.isDirectory } ??
+            fallbackDirectories.last!
         self.workspace = workspace
         try validate()
     }

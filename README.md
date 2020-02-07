@@ -33,7 +33,11 @@ zero setup
 command line utilities re-installed (and configurations restored).
 
 **Note**: By default, `zero` assumes your configuration directory is located in
-`~/.dotfiles`. This can be changed with the `--directory` flag.
+one of following locations. This can be changed with the `--directory` flag.
+
+1. `$XDG_CONFIG_HOME/zero/dotfiles`
+2. `$HOME/.config/zero/dotfiles`
+3. `$HOME/.dotfiles`
 
 ## 
 
