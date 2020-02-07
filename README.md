@@ -74,6 +74,8 @@ Initially, this was encapsulated in a Python library called
 Brewfile support it has been migrated to this simple utility and directory
 structure instead.
 
+## Directory Structure
+
 The directory structure in `~/.dotfiles` (or wherever you choose to store it)
 is expected to look like this:
 
@@ -138,7 +140,7 @@ running `zero/setup home.desktop`, it will do the following:
 
 ... etc., for each of the steps listed above.
 
-## Additional features
+## Additional Features
 
 Zero also supports running any of the above steps independently.
 
@@ -171,7 +173,7 @@ $ brew install zero-sh/tap/zero-sh
 Alternatively, pre-compiled binaries are available on the [releases
 page](https://github.com/zero-sh/zero.sh/releases).
 
-### Building from source
+### Building from Source
 
 To build from source, run:
 
@@ -191,14 +193,15 @@ script](setup) for the initial setup. This repo contains one that can either be
 copied or included as a submodule:
 
 ```sh
-$ cd ~/.dotfiles
-$ git submodule add https://github.com/zero-sh/zero.sh zero
+cd ~/.dotfiles
+git submodule add https://github.com/zero-sh/zero.sh zero
 ```
 
 Then, to pin to the latest stable version, run:
 
 ```sh
-git submodule update --init --remote --reference {VERSION} zero
+git submodule update --init --remote zero
+git -C zero checkout <VERSION>
 git commit
 ```
 
@@ -224,7 +227,7 @@ flag is included when cloning as shown above.
 
 To see how this works out in practice, here are some repos that use `zero.sh`:
 
-- [msanders/dotfiles](https://github.com/msanders/dotfiles)
+- [msanders/setup](https://github.com/msanders/setup)
 
 > Add yours here — send a PR.
 
