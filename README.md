@@ -171,7 +171,7 @@ Commands:
 [Homebrew](https://brew.sh) is the preferred way to install:
 
 ```sh
-$ brew install zero-sh/tap/zero-sh
+$ brew install zero-sh/tap/zero
 ```
 
 Alternatively, pre-compiled binaries are available on the [releases
