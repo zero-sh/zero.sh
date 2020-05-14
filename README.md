@@ -85,7 +85,7 @@ is expected to look like this:
 
 ```
 - Brewfile # Homebrew Bundle dependency file.
-- defaults.yml # macOS defaults to be set by apply-user-defaults command.
+- defaults.yaml # macOS defaults to be set by apply-user-defaults command.
 - symlinks/
     -> name/ # Arbitrary alias, for example "zsh", "vim", etc.
         => file or directory # Exact name of file or directory to symlink.
@@ -140,7 +140,7 @@ running `zero/setup home.desktop`, it will do the following:
       `workspaces/home/workspaces/desktop`:
    - Install packages and applications via Homebrew Bundle.
    - Run any scripts under `run/before` in alphabetical order.
-   - Apply system defaults described in `defaults.yml` via apply-user-defaults.
+   - Apply system defaults described in `defaults.yaml` via apply-user-defaults.
 
 ... etc., for each of the steps listed above.
 
