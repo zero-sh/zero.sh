@@ -14,7 +14,7 @@ fi
 export PATH="/usr/local/bin:$PATH"
 if ! command -v zero >/dev/null; then
     echo "Installing Zero..."
-    brew install zero-sh/tap/zero-sh
+    brew install zero-sh/tap/zero
 fi
 
 zero setup "$@" --directory "$SCRIPT_DIR"
