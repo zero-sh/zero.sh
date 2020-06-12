@@ -41,15 +41,18 @@ private extension ZeroRunner {
         )
 
         let updateNeedle = "Software Update found the following new or updated software:"
-        if result.stdout.contains(updateNeedle) {
-            let prompt = "Install system updates? This will restart your machine if necessary."
-            if Input.confirm(prompt: prompt, defaultValue: true) {
-                try Task.run("sudo", "/usr/sbin/softwareupdate", "--install", "--all", "--restart")
-                exit(0)
-            } else {
-                Term.stderr <<< "Aborting."
-                exit(1)
-            }
+        guard result.stdout.contains(updateNeedle) else {
+            Term.stdout <<< "No updates found."
+            return
+        }
+
+        let prompt = "Install system updates? This will restart your machine if necessary."
+        if Input.confirm(prompt: prompt, defaultValue: true) {
+            try Task.run("sudo", "/usr/sbin/softwareupdate", "--install", "--all", "--restart")
+            exit(0)
+        } else {
+            Term.stderr <<< "Aborting."
+            exit(1)
         }
     }
 
