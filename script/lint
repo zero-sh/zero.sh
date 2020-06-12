@@ -3,7 +3,7 @@ set -o errexit -o nounset
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-(
+main() (
     cd "$SCRIPT_DIR/.."
 
     # Workaround for https://github.com/mvdan/sh/issues/288.
@@ -26,3 +26,5 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     swiftlint lint --strict Package.swift Sources
     swiftformat --lint Package.swift Sources
 )
+
+main "$@"

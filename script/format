@@ -3,7 +3,7 @@ set -o errexit -o nounset
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-(
+main() (
     cd "$SCRIPT_DIR/.."
 
     echo "Running shfmt..."
@@ -16,3 +16,5 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     swiftlint autocorrect --format Package.swift Sources
     swiftformat Package.swift Sources
 )
+
+main "$@"

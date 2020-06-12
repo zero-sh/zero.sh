@@ -27,37 +27,33 @@ generate_completions() {
     OUT_DIR="$ARCHIVE_DIR/complete" swift run generate-completions
 }
 
-package() {
-    (
-        echo "Preparing new package..."
+package() (
+    echo "Preparing new package..."
 
-        version="$("$ARCHIVE_DIR"/zero --version | sed 's/^Version: //')"
-        package_name="zero-$version"
-        package_dir="$ARCHIVE_DIR/$package_name"
+    version="$("$ARCHIVE_DIR"/zero --version | sed 's/^Version: //')"
+    package_name="zero-$version"
+    package_dir="$ARCHIVE_DIR/$package_name"
 
-        mkdir -p "$package_dir"
-        cp "archive/zero" "$package_dir/"
-        cp CHANGELOG.md README.md LICENSE "$package_dir/"
-        cp -R "$ARCHIVE_DIR/complete" "$package_dir/"
+    mkdir -p "$package_dir"
+    cp "archive/zero" "$package_dir/"
+    cp CHANGELOG.md README.md LICENSE "$package_dir/"
+    cp -R "$ARCHIVE_DIR/complete" "$package_dir/"
 
-        cd "$ARCHIVE_DIR"
-        tar czvf "./$package_name.tar.gz" --options compression-level=9 "$package_name"
+    cd "$ARCHIVE_DIR"
+    tar czvf "./$package_name.tar.gz" --options compression-level=9 "$package_name"
 
-        sha="$(shasum -a 256 "./$package_name.tar.gz" | sed 's/ .*//')"
-        echo "Package SHA: $sha"
-    )
-}
+    sha="$(shasum -a 256 "./$package_name.tar.gz" | sed 's/ .*//')"
+    echo "Package SHA: $sha"
+)
 
-main() {
-    (
-        cd "$SCRIPT_DIR/.."
-        build_release_target
-        generate_completions
+main() (
+    cd "$SCRIPT_DIR/.."
+    build_release_target
+    generate_completions
 
-        if [ "${1:-}" = "--package" ]; then
-            package
-        fi
-    )
-}
+    if [ "${1:-}" = "--package" ]; then
+        package
+    fi
+)
 
 main "$@"
