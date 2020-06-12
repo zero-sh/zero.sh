@@ -21,11 +21,11 @@
       },
       {
         "package": "SwiftCLI",
-        "repositoryURL": "https://github.com/msanders/SwiftCLI.git",
+        "repositoryURL": "https://github.com/jakeheis/SwiftCLI.git",
         "state": {
-          "branch": "6.0.1-zero.sh",
-          "revision": "3984ba73adb4d2aa0ed6321bfc90551bcf3f0cc5",
-          "version": null
+          "branch": null,
+          "revision": "2816678bcc37f4833d32abeddbdf5e757fa891d8",
+          "version": "6.0.2"
         }
       }
     ]

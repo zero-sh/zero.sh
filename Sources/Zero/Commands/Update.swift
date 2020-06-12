@@ -25,17 +25,19 @@ private extension ZeroRunner {
     static func systemUpdate() throws {
         Term.stdout <<< TTY.progressMessage("Checking for system updates...")
 
-        // `NSUnbufferedIO` forces output of `softwareupdate` to be unbuffered
-        // so it's printed as it's being run, rather than when it completes.
-        //
-        // See https://stackoverflow.com/a/59557241/12638282.
         let result = try Task.capture(
             "/usr/sbin/softwareupdate",
             arguments: ["--list"],
-            outputStream: Term.stdout,
-            env: [
-                "NSUnbufferedIO": "YES",
-            ]
+            tee: Term.stdout,
+
+            // `NSUnbufferedIO` forces output of `softwareupdate` to be
+            // unbuffered so it's printed as it's being run, rather than when
+            // it completes.
+            //
+            // See https://stackoverflow.com/a/59557241/12638282.
+            env: ProcessInfo.processInfo.environment.merging([
+                "NSUnbufferedIO": "YES"
+            ], uniquingKeysWith: { (_, new) in new })
         )
 
         let updateNeedle = "Software Update found the following new or updated software:"
