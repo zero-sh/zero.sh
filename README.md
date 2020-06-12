@@ -283,6 +283,7 @@ few ways you can help:
 - Fix bugs and [submit pull requests](https://github.com/zero-sh/zero.sh/pulls).
 - Write, clarify, or fix documentation.
 - Suggest or add new features.
+- Star this repository so it can be added to upstream Homebrew.
 
 ## Inspiration
 
