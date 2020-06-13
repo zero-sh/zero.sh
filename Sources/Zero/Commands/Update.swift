@@ -36,8 +36,8 @@ private extension ZeroRunner {
             //
             // See https://stackoverflow.com/a/59557241/12638282.
             env: ProcessInfo.processInfo.environment.merging([
-                "NSUnbufferedIO": "YES"
-            ], uniquingKeysWith: { (_, new) in new })
+                "NSUnbufferedIO": "YES",
+            ], uniquingKeysWith: { _, new in new })
         )
 
         let updateNeedle = "Software Update found the following new or updated software:"
