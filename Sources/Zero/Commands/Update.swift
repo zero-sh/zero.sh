@@ -48,7 +48,16 @@ private extension ZeroRunner {
 
         let prompt = "Install system updates? This will restart your machine if necessary."
         if Input.confirm(prompt: prompt, defaultValue: true) {
-            try Task.run("sudo", "/usr/sbin/softwareupdate", "--install", "--all", "--restart")
+            let exitStatus = try Task.spawn("/usr/bin/sudo", arguments: [
+                "--",
+                "/usr/sbin/softwareupdate",
+                "--install",
+                "--all",
+                "--restart",
+            ])
+            guard exitStatus == 0 else {
+                throw SpawnError(exitStatus: exitStatus)
+            }
             exit(0)
         } else {
             Term.stderr <<< "Aborting."

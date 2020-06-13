@@ -47,8 +47,7 @@ struct ZeroRunner {
     /// Run an executable with the given arguments, printing the command before
     /// running.
     func runTask(_ executable: String, _ arguments: String..., at directory: Path? = nil) throws {
-        let escapedCommand: [String] = [executable] + arguments.map(Task.escapeArgument)
-        Term.stdout <<< TTY.commandMessage(escapedCommand.joined(separator: " "))
+        printCommand(executable, arguments)
 
         if let directory = directory, executable.hasPrefix(".") {
             // Process.launchPath doesn't seem to honor currentDirectoryPath
@@ -60,6 +59,31 @@ struct ZeroRunner {
             )
         } else {
             try Task.run(executable, arguments: arguments, directory: directory?.string)
+        }
+    }
+
+    /// Run an executable using `Task.spawn` with the given arguments, printing
+    /// the command before running.
+    func spawnTask(_ executable: String, _ arguments: String..., at directory: Path? = nil) throws {
+        printCommand(executable, arguments)
+
+        let fileManager = FileManager.default
+        let previousWorkingDirectory = fileManager.currentDirectoryPath
+        if let dir = directory?.string, !fileManager.changeCurrentDirectoryPath(dir) {
+            throw NSError(domain: NSPOSIXErrorDomain, code: Int(errno), userInfo: [:])
+        }
+        defer {
+            fileManager.changeCurrentDirectoryPath(previousWorkingDirectory)
+        }
+
+        let exitStatus: Int32
+        if let directory = directory, executable.hasPrefix(".") {
+            exitStatus = try Task.spawn(directory.join(executable).string, arguments: arguments)
+        } else {
+            exitStatus = try Task.spawn(executable, arguments: arguments)
+        }
+        guard exitStatus == 0 else {
+            throw SpawnError(exitStatus: exitStatus)
         }
     }
 }
@@ -90,6 +114,11 @@ private extension ZeroRunner {
             lastDirectory.join("workspaces").isDirectory {
             throw ZeroValidationError.workspaceIsParent
         }
+    }
+
+    func printCommand(_ executable: String, _ arguments: [String]) {
+        let escapedCommand: [String] = [executable] + arguments.map(Task.escapeArgument)
+        Term.stdout <<< TTY.commandMessage(escapedCommand.joined(separator: " "))
     }
 }
 

@@ -34,7 +34,7 @@ extension ZeroRunner {
         }
 
         for script in scripts {
-            try runTask("./\(script.basename())", at: scriptDirectory)
+            try spawnTask("./\(script.basename())", at: scriptDirectory)
         }
     }
 }
