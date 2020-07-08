@@ -4,8 +4,8 @@ osx_image: xcode11.1
 before_install:
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/e49548cbdf6aed9ec715613ba38fcdd389abd9fc/Formula/shellcheck.rb
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/850ae1b380fd27dc034aff30e228cea50913cdff/Formula/shfmt.rb
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/203436f8567a3b6455264a1d896da5b1df1e50e6/Formula/swiftlint.rb
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/43a119b612109938b7a5f8a96e0d26f8f2da681d/Formula/swiftformat.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/41ed92812a0df927c6cd2b4b5f438e56574726e5/Formula/swiftlint.rb
+  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/c5a2985ae03734adfc0c4d23c15cf6deb9bf648e/Formula/swiftformat.rb
 script:
   - ./script/lint
   - make

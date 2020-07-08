@@ -92,17 +92,17 @@ private extension ZeroRunner {
     /// Validates runner before use. Ensures given configDirectory and
     /// workspace are valid and exist on disk.
     func validate() throws {
-        if !configDirectory.isDirectory {
-            throw ZeroValidationError.invalidDirectory(configDirectory)
+        if !self.configDirectory.isDirectory {
+            throw ZeroValidationError.invalidDirectory(self.configDirectory)
         }
-        if workspace.isEmpty, configDirectory.join("workspaces").exists {
+        if self.workspace.isEmpty, self.configDirectory.join("workspaces").exists {
             throw ZeroValidationError.missingWorkspace
         }
 
         // Absolute path to each component of the workspace. For example, the
         // workspace "home.laptop" will contain the following paths:
         // "workspaces/home", "workspaces/home/laptop".
-        let componentDirectories: [Path] = workspace.reduce(into: []) { result, name in
+        let componentDirectories: [Path] = self.workspace.reduce(into: []) { result, name in
             let previous: Path = result.endIndex > 0 ? result[result.endIndex - 1] : configDirectory
             result.append(previous.join("workspaces").join(name))
         }
@@ -110,6 +110,7 @@ private extension ZeroRunner {
         if let missingDirectory = componentDirectories.first(where: { !$0.isDirectory }) {
             throw ZeroValidationError.invalidDirectory(missingDirectory)
         }
+        // swiftformat:disable braces wrapMultilineStatementBraces
         if let lastDirectory = componentDirectories.last,
             lastDirectory.join("workspaces").isDirectory {
             throw ZeroValidationError.workspaceIsParent

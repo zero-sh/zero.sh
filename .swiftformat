@@ -1,2 +1,3 @@
 --wraparguments before-first
 --maxwidth 100
+--self insert
