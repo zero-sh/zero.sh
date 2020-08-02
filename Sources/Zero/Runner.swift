@@ -46,6 +46,33 @@ struct ZeroRunner {
         try validate()
     }
 
+    static func captureTask(
+        _ executable: String,
+        arguments: [String],
+        tee: WritableStream? = nil,
+        at directory: Path? = nil,
+        env: [String: String] = ProcessInfo.processInfo.environment
+    ) throws -> CaptureResult {
+        self.printCommand(executable, arguments)
+        if let directory = directory, executable.hasPrefix(".") {
+            return try Task.capture(
+                directory.join(executable).string,
+                arguments: arguments,
+                directory: directory.string,
+                tee: tee,
+                env: env
+            )
+        }
+
+        return try Task.capture(
+            executable,
+            arguments: arguments,
+            directory: directory?.string,
+            tee: tee,
+            env: env
+        )
+    }
+
     /// Run an executable with the given arguments, printing the command before
     /// running.
     static func runTask(

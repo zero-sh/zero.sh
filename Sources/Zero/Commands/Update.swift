@@ -26,7 +26,7 @@ private extension ZeroRunner {
         Term.stdout <<< TTY.progressMessage("Checking for system updates...")
 
         let verboseFlags: [String] = verbose ? ["--verbose"] : []
-        let result = try Task.capture(
+        let result = try ZeroRunner.captureTask(
             "/usr/sbin/softwareupdate",
             arguments: ["--list"] + verboseFlags,
             tee: Term.stdout,
@@ -49,16 +49,13 @@ private extension ZeroRunner {
 
         let prompt = "Install system updates? This will restart your machine if necessary."
         if Input.confirm(prompt: prompt, defaultValue: true) {
-            let exitStatus = try Task.spawn("/usr/bin/sudo", arguments: [
+            try ZeroRunner.spawnTask("/usr/bin/sudo", arguments: [
                 "--",
                 "/usr/sbin/softwareupdate",
                 "--install",
                 "--all",
                 "--restart",
             ] + verboseFlags)
-            guard exitStatus == 0 else {
-                throw SpawnError(exitStatus: exitStatus)
-            }
             exit(0)
         } else {
             Term.stderr <<< "Aborting."
@@ -69,14 +66,14 @@ private extension ZeroRunner {
     /// Check and apply brew and brew cask updates.
     static func brewUpdate(verbose: Bool) throws {
         let verboseFlags: [String] = verbose ? ["--verbose"] : []
-        try Task.run("brew", arguments: ["update"] + verboseFlags)
-        try Task.run("brew", arguments: ["upgrade"] + verboseFlags)
-        try Task.run("brew", arguments: ["cask", "upgrade"] + verboseFlags)
+        try ZeroRunner.runTask("brew", arguments: ["update"] + verboseFlags)
+        try ZeroRunner.runTask("brew", arguments: ["upgrade"] + verboseFlags)
+        try ZeroRunner.runTask("brew", arguments: ["cask", "upgrade"] + verboseFlags)
     }
 
     /// Check and apply app store updates.
     static func appStoreUpdate() throws {
         Term.stdout <<< TTY.progressMessage("Upgrading apps from the App Store...")
-        try Task.run("mas", "upgrade")
+        try ZeroRunner.runTask("mas", "upgrade")
     }
 }
