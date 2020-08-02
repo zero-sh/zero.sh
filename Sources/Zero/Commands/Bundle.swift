@@ -9,7 +9,11 @@ final class BundleCommand: Command {
     @Key("-d", "--directory") var configDirectory: Path?
 
     func execute() throws {
-        let runner = try ZeroRunner(configDirectory: configDirectory, workspace: workspace ?? [])
+        let runner = try ZeroRunner(
+            configDirectory: self.configDirectory,
+            workspace: self.workspace ?? [],
+            verbose: self.verbose
+        )
         try runner.workspaceDirectories.forEach(runner.bundle)
     }
 }
@@ -20,7 +24,8 @@ extension ZeroRunner {
         if !directory.join("Brewfile").exists {
             Term.stdout <<< "No Brewfile found."
         } else {
-            try runTask("brew", "bundle", at: directory)
+            let verboseFlags: [String] = self.verbose ? ["--verbose"] : []
+            try Self.runTask("brew", arguments: ["bundle"] + verboseFlags, at: directory)
         }
     }
 }

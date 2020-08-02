@@ -32,22 +32,28 @@ enum ZeroValidationError: LocalizedError {
 struct ZeroRunner {
     let configDirectory: Path
     let workspace: Workspace
+    let verbose: Bool
 
-    init(configDirectory: Path? = nil, workspace: Workspace) throws {
+    init(configDirectory: Path? = nil, workspace: Workspace, verbose: Bool) throws {
         let fallbackDirectories: [Path] = [
             Path.XDG.configHome.join("zero").join("dotfiles"),
             Path.home.join(".dotfiles"),
         ]
         self.configDirectory = configDirectory ?? fallbackDirectories.first { $0.isDirectory } ??
             fallbackDirectories.last!
+        self.verbose = verbose
         self.workspace = workspace
         try validate()
     }
 
     /// Run an executable with the given arguments, printing the command before
     /// running.
-    func runTask(_ executable: String, _ arguments: String..., at directory: Path? = nil) throws {
-        printCommand(executable, arguments)
+    static func runTask(
+        _ executable: String,
+        arguments: [String],
+        at directory: Path? = nil
+    ) throws {
+        self.printCommand(executable, arguments)
 
         if let directory = directory, executable.hasPrefix(".") {
             // Process.launchPath doesn't seem to honor currentDirectoryPath
@@ -64,8 +70,12 @@ struct ZeroRunner {
 
     /// Run an executable using `Task.spawn` with the given arguments, printing
     /// the command before running.
-    func spawnTask(_ executable: String, _ arguments: String..., at directory: Path? = nil) throws {
-        printCommand(executable, arguments)
+    static func spawnTask(
+        _ executable: String,
+        arguments: [String],
+        at directory: Path? = nil
+    ) throws {
+        self.printCommand(executable, arguments)
 
         let fileManager = FileManager.default
         let previousWorkingDirectory = fileManager.currentDirectoryPath
@@ -85,6 +95,22 @@ struct ZeroRunner {
         guard exitStatus == 0 else {
             throw SpawnError(exitStatus: exitStatus)
         }
+    }
+
+    static func runTask(
+        _ executable: String,
+        _ arguments: String...,
+        at directory: Path? = nil
+    ) throws {
+        try self.runTask(executable, arguments: arguments, at: directory)
+    }
+
+    static func spawnTask(
+        _ executable: String,
+        _ arguments: String...,
+        at directory: Path? = nil
+    ) throws {
+        try self.spawnTask(executable, arguments: arguments, at: directory)
     }
 }
 
@@ -117,7 +143,7 @@ private extension ZeroRunner {
         }
     }
 
-    func printCommand(_ executable: String, _ arguments: [String]) {
+    static func printCommand(_ executable: String, _ arguments: [String]) {
         let escapedCommand: [String] = [executable] + arguments.map(Task.escapeArgument)
         Term.stdout <<< TTY.commandMessage(escapedCommand.joined(separator: " "))
     }

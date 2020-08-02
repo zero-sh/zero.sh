@@ -8,9 +8,16 @@ final class SetupCommand: Command {
     @Param var workspace: Workspace?
     @Key("-d", "--directory") var configDirectory: Path?
 
+    @Flag("-v", "--verbose", description: "Enable verbose output for zero and subcommands.")
+    var verbose: Bool
+
     func execute() throws {
-        let runner = try ZeroRunner(configDirectory: configDirectory, workspace: workspace ?? [])
-        try ZeroRunner.update()
+        let runner = try ZeroRunner(
+            configDirectory: self.configDirectory,
+            workspace: self.workspace ?? [],
+            verbose: self.verbose
+        )
+        try ZeroRunner.update(verbose: self.verbose)
         try runner.workspaceDirectories.forEach(runner.setup)
     }
 }

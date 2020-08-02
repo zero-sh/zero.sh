@@ -16,6 +16,7 @@ public enum Zero {
                 RunScriptsCommand(),
             ]
         )
+        cli.globalOptions.append(verboseFlag)
         cli.helpMessageGenerator = ZeroHelpMessageGenerator()
         return cli
     }()
@@ -26,3 +27,15 @@ struct ZeroHelpMessageGenerator: HelpMessageGenerator {
         out <<< TTY.errorMessage(message)
     }
 }
+
+extension Command {
+    var verbose: Bool {
+        verboseFlag.value
+    }
+}
+
+private let verboseFlag = Flag(
+    "-v",
+    "--verbose",
+    description: "Enable verbose output for zero and subcommands."
+)

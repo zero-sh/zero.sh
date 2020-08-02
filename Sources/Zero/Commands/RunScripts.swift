@@ -9,7 +9,11 @@ final class RunScriptsCommand: Command {
     @Key("-d", "--directory") var configDirectory: Path?
 
     func execute() throws {
-        let runner = try ZeroRunner(configDirectory: configDirectory, workspace: workspace ?? [])
+        let runner = try ZeroRunner(
+            configDirectory: self.configDirectory,
+            workspace: self.workspace ?? [],
+            verbose: self.verbose
+        )
         try runner.workspaceDirectories.forEach { directory in
             try runner.runScripts(directory: directory, suffix: .before)
             try runner.runScripts(directory: directory, suffix: .after)
@@ -34,7 +38,7 @@ extension ZeroRunner {
         }
 
         for script in scripts {
-            try spawnTask("./\(script.basename())", at: scriptDirectory)
+            try Self.spawnTask("./\(script.basename())", at: scriptDirectory)
         }
     }
 }
