@@ -9,7 +9,11 @@ final class ApplyDefaultsCommand: Command {
     @Key("-d", "--directory") var configDirectory: Path?
 
     func execute() throws {
-        let runner = try ZeroRunner(configDirectory: configDirectory, workspace: workspace ?? [])
+        let runner = try ZeroRunner(
+            configDirectory: self.configDirectory,
+            workspace: self.workspace ?? [],
+            verbose: self.verbose
+        )
         try runner.workspaceDirectories.forEach(runner.applyDefaults)
     }
 }
@@ -25,8 +29,13 @@ extension ZeroRunner {
 
         // Close any open System Preferences panes, to prevent them from
         // overriding settings we’re about to change.
-        try runTask("osascript", "-e", "quit app \"System Preferences\"")
+        try Self.runTask("osascript", "-e", "quit app \"System Preferences\"")
 
-        try runTask("apply-user-defaults", "./defaults.yaml", at: directory)
+        let verboseFlags: [String] = self.verbose ? ["--verbose"] : []
+        try Self.runTask(
+            "apply-user-defaults",
+            arguments: ["./defaults.yaml"] + verboseFlags,
+            at: directory
+        )
     }
 }

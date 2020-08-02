@@ -6,28 +6,29 @@ final class UpdateCommand: Command {
     let shortDescription: String = "Check for system and application updates"
 
     func execute() throws {
-        try ZeroRunner.update()
+        try ZeroRunner.update(verbose: self.verbose)
     }
 }
 
 extension ZeroRunner {
     /// Check and apply all system and application updates via
     /// `softwareupdate`, `brew` and `mas`.
-    static func update() throws {
-        try systemUpdate()
-        try brewUpdate()
+    static func update(verbose: Bool) throws {
+        try systemUpdate(verbose: verbose)
+        try brewUpdate(verbose: verbose)
         try appStoreUpdate()
     }
 }
 
 private extension ZeroRunner {
     /// Check and apply system updates via `softwareupdate` CLI.
-    static func systemUpdate() throws {
+    static func systemUpdate(verbose: Bool) throws {
         Term.stdout <<< TTY.progressMessage("Checking for system updates...")
 
+        let verboseFlags: [String] = verbose ? ["--verbose"] : []
         let result = try Task.capture(
             "/usr/sbin/softwareupdate",
-            arguments: ["--list"],
+            arguments: ["--list"] + verboseFlags,
             tee: Term.stdout,
 
             // `NSUnbufferedIO` forces output of `softwareupdate` to be
@@ -54,7 +55,7 @@ private extension ZeroRunner {
                 "--install",
                 "--all",
                 "--restart",
-            ])
+            ] + verboseFlags)
             guard exitStatus == 0 else {
                 throw SpawnError(exitStatus: exitStatus)
             }
@@ -66,10 +67,11 @@ private extension ZeroRunner {
     }
 
     /// Check and apply brew and brew cask updates.
-    static func brewUpdate() throws {
-        try Task.run("brew", "update")
-        try Task.run("brew", "upgrade")
-        try Task.run("brew", "cask", "upgrade")
+    static func brewUpdate(verbose: Bool) throws {
+        let verboseFlags: [String] = verbose ? ["--verbose"] : []
+        try Task.run("brew", arguments: ["update"] + verboseFlags)
+        try Task.run("brew", arguments: ["upgrade"] + verboseFlags)
+        try Task.run("brew", arguments: ["cask", "upgrade"] + verboseFlags)
     }
 
     /// Check and apply app store updates.
