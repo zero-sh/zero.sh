@@ -43,7 +43,7 @@ private extension ZeroRunner {
 
         let updateNeedle = "Software Update found the following new or updated software:"
         guard result.stdout.contains(updateNeedle) else {
-            Term.stdout <<< "No updates found."
+            Term.stdout <<< "No new software available."
             return
         }
 
