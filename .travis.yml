@@ -1,7 +1,8 @@
 language: swift
 os: osx
-osx_image: xcode11.1
+osx_image: xcode11.3
 before_install:
+  - brew update
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/e49548cbdf6aed9ec715613ba38fcdd389abd9fc/Formula/shellcheck.rb
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/850ae1b380fd27dc034aff30e228cea50913cdff/Formula/shfmt.rb
   - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/41ed92812a0df927c6cd2b4b5f438e56574726e5/Formula/swiftlint.rb
