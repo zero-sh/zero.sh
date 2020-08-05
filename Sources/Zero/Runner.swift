@@ -46,6 +46,8 @@ struct ZeroRunner {
         try validate()
     }
 
+    /// Run an executable synchronously and capture its output, printing the
+    /// command before running.
     static func captureTask(
         _ executable: String,
         arguments: [String],
