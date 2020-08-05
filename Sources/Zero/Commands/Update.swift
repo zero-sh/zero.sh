@@ -68,7 +68,12 @@ private extension ZeroRunner {
         let verboseFlags: [String] = verbose ? ["--verbose"] : []
         try ZeroRunner.runTask("brew", arguments: ["update"] + verboseFlags)
         try ZeroRunner.runTask("brew", arguments: ["upgrade"] + verboseFlags)
-        try ZeroRunner.runTask("brew", arguments: ["cask", "upgrade"] + verboseFlags)
+        try ZeroRunner.runShell(
+            "brew cask outdated --greedy --verbose | " +
+                "grep -v '(latest)' | " +
+                "awk '{print $1}' | " +
+                "xargs brew cask reinstall"
+        )
     }
 
     /// Check and apply app store updates.

@@ -75,6 +75,18 @@ struct ZeroRunner {
         )
     }
 
+    /// Run a shell statement synchronously, printing the command before
+    /// running.
+    ///
+    /// - Warning: Do not use this with unsanitized user input.
+    static func runShell(
+        _ command: String,
+        at directory: Path? = nil
+    ) throws {
+        self.printCommand(command)
+        try Task.run("/bin/sh", arguments: ["-c", command], directory: directory?.string)
+    }
+
     /// Run an executable with the given arguments, printing the command before
     /// running.
     static func runTask(
@@ -172,7 +184,7 @@ private extension ZeroRunner {
         }
     }
 
-    static func printCommand(_ executable: String, _ arguments: [String]) {
+    static func printCommand(_ executable: String, _ arguments: [String] = []) {
         let escapedCommand: [String] = [executable] + arguments.map(Task.escapeArgument)
         Term.stdout <<< TTY.commandMessage(escapedCommand.joined(separator: " "))
     }
