@@ -5,7 +5,7 @@ public enum Zero {
     public static let cli: CLI = {
         let cli = CLI(
             name: "zero",
-            version: "0.4.0",
+            version: "0.4.1",
             description: "Radically simple personal bootstrapping tool for macOS.",
             commands: [
                 SetupCommand(),
