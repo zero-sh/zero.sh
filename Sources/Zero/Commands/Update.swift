@@ -5,17 +5,20 @@ final class UpdateCommand: Command {
     let name: String = "update"
     let shortDescription: String = "Check for system and application updates"
 
+    @Flag("-a", "--all", description: "Update all casks, including those with auto-update enabled.")
+    var updateAll: Bool
+
     func execute() throws {
-        try ZeroRunner.update(verbose: self.verbose)
+        try ZeroRunner.update(verbose: self.verbose, updateAll: self.updateAll)
     }
 }
 
 extension ZeroRunner {
     /// Check and apply all system and application updates via
     /// `softwareupdate`, `brew` and `mas`.
-    static func update(verbose: Bool) throws {
+    static func update(verbose: Bool, updateAll: Bool) throws {
         try systemUpdate(verbose: verbose)
-        try brewUpdate(verbose: verbose)
+        try brewUpdate(verbose: verbose, updateAll: updateAll)
         try appStoreUpdate()
     }
 }
@@ -64,16 +67,19 @@ private extension ZeroRunner {
     }
 
     /// Check and apply brew and brew cask updates.
-    static func brewUpdate(verbose: Bool) throws {
+    static func brewUpdate(verbose: Bool, updateAll: Bool) throws {
         let verboseFlags: [String] = verbose ? ["--verbose"] : []
         try ZeroRunner.runTask("brew", arguments: ["update"] + verboseFlags)
         try ZeroRunner.runTask("brew", arguments: ["upgrade"] + verboseFlags)
-        try ZeroRunner.runShell(
-            "brew cask outdated --greedy --verbose | " +
-                "grep -v '(latest)' | " +
-                "awk '{print $1}' | " +
-                "xargs brew cask reinstall"
-        )
+
+        if updateAll {
+            try ZeroRunner.runShell(
+                "brew cask outdated --greedy --verbose | " +
+                  "grep -v '(latest)' | " +
+                  "awk '{print $1}' | " +
+                  "xargs brew cask reinstall"
+            )
+        }
     }
 
     /// Check and apply app store updates.

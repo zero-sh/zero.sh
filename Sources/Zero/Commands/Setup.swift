@@ -8,6 +8,8 @@ final class SetupCommand: Command {
     @Param var workspace: Workspace?
     @Key("-d", "--directory") var configDirectory: Path?
 
+    @Flag("-a", "--all", description: "Update all casks, including those with auto-update enabled.")
+    var updateAll: Bool
 
     func execute() throws {
         let runner = try ZeroRunner(
@@ -15,7 +17,7 @@ final class SetupCommand: Command {
             workspace: self.workspace ?? [],
             verbose: self.verbose
         )
-        try ZeroRunner.update(verbose: self.verbose)
+        try ZeroRunner.update(verbose: self.verbose, updateAll: self.updateAll)
         try runner.workspaceDirectories.forEach(runner.setup)
     }
 }
