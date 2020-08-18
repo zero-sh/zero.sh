@@ -32,7 +32,7 @@ extension Task {
         }
 
         var exitStatus: Int32 = 0
-        try withCStrings(arguments) { cArgs in
+        try withCStrings([executable] + arguments) { cArgs in
             let envs = ProcessInfo().environment.map { key, value in "\(key)=\(value)" }
             try withCStrings(envs) { cEnvs in
                 var pid: pid_t = 0
