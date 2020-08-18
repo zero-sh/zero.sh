@@ -79,12 +79,12 @@ struct ZeroRunner {
     /// running.
     ///
     /// - Warning: Do not use this with unsanitized user input.
-    static func runShell(
-        _ command: String,
-        at directory: Path? = nil
-    ) throws {
+    static func spawnShell(_ command: String) throws {
         self.printCommand(command)
-        try Task.run("/bin/sh", arguments: ["-c", command], directory: directory?.string)
+        let exitStatus: Int32 = try Task.spawn("/bin/sh", arguments: ["-c", command])
+        guard exitStatus == 0 else {
+            throw SpawnError(exitStatus: exitStatus)
+        }
     }
 
     /// Run an executable with the given arguments, printing the command before
@@ -130,8 +130,10 @@ struct ZeroRunner {
         let exitStatus: Int32
         if let directory = directory, executable.hasPrefix(".") {
             exitStatus = try Task.spawn(directory.join(executable).string, arguments: arguments)
-        } else {
+        } else if executable.hasPrefix("/") {
             exitStatus = try Task.spawn(executable, arguments: arguments)
+        } else {
+            exitStatus = try Task.spawn("/usr/bin/env", arguments: [executable] + arguments)
         }
         guard exitStatus == 0 else {
             throw SpawnError(exitStatus: exitStatus)

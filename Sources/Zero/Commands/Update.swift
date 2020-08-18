@@ -70,10 +70,10 @@ private extension ZeroRunner {
     static func brewUpdate(verbose: Bool, updateAll: Bool) throws {
         let verboseFlags: [String] = verbose ? ["--verbose"] : []
         try ZeroRunner.runTask("brew", arguments: ["update"] + verboseFlags)
-        try ZeroRunner.runTask("brew", arguments: ["upgrade"] + verboseFlags)
+        try ZeroRunner.spawnTask("brew", arguments: ["upgrade"] + verboseFlags)
 
         if updateAll {
-            try ZeroRunner.runShell(
+            try ZeroRunner.spawnShell(
                 "brew cask outdated --greedy --verbose | " +
                   "grep -v '(latest)' | " +
                   "awk '{print $1}' | " +
