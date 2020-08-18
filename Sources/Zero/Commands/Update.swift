@@ -75,9 +75,9 @@ private extension ZeroRunner {
         if updateAll {
             try ZeroRunner.spawnShell(
                 "brew cask outdated --greedy --verbose | " +
-                  "grep -v '(latest)' | " +
-                  "awk '{print $1}' | " +
-                  "xargs brew cask reinstall"
+                    "grep -v '(latest)' | " +
+                    "awk '{print $1}' | " +
+                    "xargs brew cask reinstall"
             )
         }
     }
