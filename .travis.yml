@@ -1,12 +1,25 @@
+addons:
+  homebrew:
+    update: true
 language: swift
 os: osx
 osx_image: xcode11.3
 before_install:
-  - brew update
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/e49548cbdf6aed9ec715613ba38fcdd389abd9fc/Formula/shellcheck.rb
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/850ae1b380fd27dc034aff30e228cea50913cdff/Formula/shfmt.rb
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/41ed92812a0df927c6cd2b4b5f438e56574726e5/Formula/swiftlint.rb
-  - brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/c5a2985ae03734adfc0c4d23c15cf6deb9bf648e/Formula/swiftformat.rb
+  - cd "$(mktemp -d)"
+  - echo "a4a79ab62f4ee3e3d32cb47721741643ce395f19d7f44fa14efa8f61d7bacc63  ./shellcheck.rb" >> formulas.sha256sum
+  - echo "f884c6afcd7aabc2f61bd5da0c7c216bc1eb1a2ac8b23b43ffb84a7ce56c0ac0  ./shfmt.rb" >> formulas.sha256sum
+  - echo "d40813809b679b656a65b50ba913cbc4a4b81cf8ba347cc1cb7b68ee8b784a9f  ./swiftlint.rb" >> formulas.sha256sum
+  - echo "5d838b88e02832e23a55bd1f598baed65be3f4d6a47888045de3839525694049  ./swiftformat.rb" >> formulas.sha256sum
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/e49548cbdf6aed9ec715613ba38fcdd389abd9fc/Formula/shellcheck.rb -o shellcheck.rb
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/850ae1b380fd27dc034aff30e228cea50913cdff/Formula/shfmt.rb -o shfmt.rb
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/41ed92812a0df927c6cd2b4b5f438e56574726e5/Formula/swiftlint.rb -o swiftlint.rb
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/c5a2985ae03734adfc0c4d23c15cf6deb9bf648e/Formula/swiftformat.rb -o swiftformat.rb
+  - shasum --algorithm 256 --check formulas.sha256sum
+  - brew reinstall --force-bottle ./shellcheck.rb
+  - brew reinstall --force-bottle ./shfmt.rb
+  - brew reinstall --force-bottle ./swiftlint.rb
+  - brew reinstall --force-bottle ./swiftformat.rb
+  - cd -
 script:
   - ./script/lint
   - make
