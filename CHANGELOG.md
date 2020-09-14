@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.5.1 - 2020-09-14
+
+### Changed
+
+- Updated Path.swift dependency to version 1.2.0.
+
+### Fixed
+
+- Fixed directory traversal in installation script.
+- Fixed deprecation warnings in latest version of Homebrew.
+
 ## 0.5.0 - 2020-08-18
 
 ### Breaking Changes
