@@ -7,11 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.5.0 - 2020-08-18
 
-### Changed
+### Breaking Changes
 
 - Greedy cask update feature is now guarded behind the `--all` flag (e.g. `zero
   update --all` or `zero setup --all`).
-  
   
 ### Fixed
 
