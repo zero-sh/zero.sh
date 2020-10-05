@@ -10,7 +10,7 @@ package.products = [
 ]
 package.dependencies = [
     .package(url: "https://github.com/mxcl/Path.swift.git", .upToNextMajor(from: "1.2.0")),
-    .package(url: "https://github.com/onevcat/Rainbow.git", .upToNextMajor(from: "3.1.5")),
+    .package(url: "https://github.com/onevcat/Rainbow.git", .upToNextMajor(from: "3.2.0")),
     .package(url: "https://github.com/jakeheis/SwiftCLI.git", .upToNextMajor(from: "6.0.2")),
 ]
 package.targets = [
