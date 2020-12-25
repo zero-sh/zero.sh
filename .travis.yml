@@ -6,14 +6,14 @@ os: osx
 osx_image: xcode11.3
 before_install:
   - cd "$(mktemp -d)"
-  - echo "7eb54ed8f2d4db5a7276672146c843f802d138bf9bb7c93df9bec2b949289bca  ./shellcheck.rb" >> formulas.sha256sum
-  - echo "9e7362583e49656847013fd8cbe6f9e6e0e19ad0210c3a5bf4c4f728a7104001  ./shfmt.rb" >> formulas.sha256sum
-  - echo "df616ab9117478389f88318c9d6a80813ae75c3b2fd22526d19b2b1d2986a77c  ./swiftlint.rb" >> formulas.sha256sum
-  - echo "218e1dce3acf313aa52836fc01d90fbb1fa0a9527afe91ad380c7a0cbbf70ed1  ./swiftformat.rb" >> formulas.sha256sum
-  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/0eebcf957db82f8945c61e0120d006f7301fbc44/Formula/shellcheck.rb -o shellcheck.rb
-  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/a4638648878a81e8ea4cf9aa9d1d2b6388a85271/Formula/shfmt.rb -o shfmt.rb
-  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/644ba01953a0a46d1550856e473234798fb08029/Formula/swiftlint.rb -o swiftlint.rb
-  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/cb60182c6ce3a4fa916d7e746a1bab2f31b22e5e/Formula/swiftformat.rb -o swiftformat.rb
+  - echo "859c18f80d547d0911fafe1a83696a19dfc6bfdeea69129c0097fd34cfe56ceb  ./shellcheck.rb" >> formulas.sha256sum
+  - echo "4b86dcee11a3cc9ef13a6b8b491deedf0b88d1b3d929b4e2107076711f1c93e8  ./shfmt.rb" >> formulas.sha256sum
+  - echo "4f3f6a6315325633be0416d5f246d4a285130830c1d6d43db07fff8e22408534  ./swiftlint.rb" >> formulas.sha256sum
+  - echo "7fca2e48f852c4438c6fbce475cd6448c506725bdea4e9a9ceb894cb7d9e6f62  ./swiftformat.rb" >> formulas.sha256sum
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/d4069ff274c2c45d20edf45c10ee0a91f99829f1/Formula/shellcheck.rb -o shellcheck.rb
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/25c680332e18dd2e0dfb959441801241f54b1135/Formula/shfmt.rb -o shfmt.rb
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/55becd959f7ab1fd412ac26c36795fcc235ad741/Formula/swiftlint.rb -o swiftlint.rb
+  - curl --proto "=https" --tlsv1.2 -sSf https://raw.githubusercontent.com/Homebrew/homebrew-core/b7a4a2fc5a490bd10a4eccbb1b0c53693ff2d9a6/Formula/swiftformat.rb -o swiftformat.rb
   - shasum --algorithm 256 --check formulas.sha256sum
   - brew reinstall --force-bottle ./shellcheck.rb
   - brew reinstall --force-bottle ./shfmt.rb

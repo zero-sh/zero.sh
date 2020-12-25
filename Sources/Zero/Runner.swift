@@ -181,7 +181,7 @@ private extension ZeroRunner {
         }
         // swiftformat:disable braces wrapMultilineStatementBraces
         if let lastDirectory = componentDirectories.last,
-            lastDirectory.join("workspaces").isDirectory {
+           lastDirectory.join("workspaces").isDirectory {
             throw ZeroValidationError.workspaceIsParent
         }
     }
