@@ -1,6 +1,6 @@
 .PHONY: build
 build: ## Build debug target for development.
-	swift build
+	swift build --arch arm64 --arch x86_64
 
 .PHONY: help
 help: ## Print help information.
