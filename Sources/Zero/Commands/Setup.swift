@@ -51,7 +51,7 @@ extension ZeroRunner {
             result.append(containerDirectory.join(name))
         }
 
-        return possibleWorkspaceDirectories.filter { $0.isDirectory }
+        return possibleWorkspaceDirectories.filter(\.isDirectory)
     }
 }
 
