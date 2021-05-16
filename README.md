@@ -135,7 +135,7 @@ described in `shared` of the parent or sister directory. For example, when
 running `zero/setup home.desktop`, it will do the following:
 
 1. Check for system and application updates.
-2. For each workspace in `workspaces/shared`, followed by in
+2. For each workspace in `workspaces/shared`,
       `workspaces/home/workspaces/shared`, then
       `workspaces/home/workspaces/desktop`:
    - Install packages and applications via Homebrew Bundle.
