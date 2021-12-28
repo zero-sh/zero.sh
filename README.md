@@ -51,7 +51,7 @@ The `setup` command will do the following, in order:
    cask], and [`mas`][mas].
 2. Install packages and applications via [Homebrew Bundle].
 3. Run any scripts under `run/before` in alphabetical order.
-4. Apply system defaults described in `defaults.yml` via
+4. Apply system defaults described in `defaults.yaml` via
    [`apply-user-defaults`][apply-user-defaults].
 5. Symlink configuration files listed under `symlinks` to the home directory.
 6. Run the remaining scripts under `run/after` in alphabetical order.
