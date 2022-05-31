@@ -10,12 +10,16 @@ final class SetupCommand: Command {
 
     @Flag("-a", "--all", description: "Update all casks, including those with auto-update enabled.")
     var updateAll: Bool
+    
+    @Flag("-r","--rm", description: "Remove bottles that are not in the Brewfile.")
+    var removeNotPresent: Bool
 
     func execute() throws {
         let runner = try ZeroRunner(
             configDirectory: self.configDirectory,
             workspace: self.workspace ?? [],
-            verbose: self.verbose
+            verbose: self.verbose,
+            removeNotPresent: self.removeNotPresent
         )
         try ZeroRunner.update(verbose: self.verbose, updateAll: self.updateAll)
         try runner.workspaceDirectories.forEach(runner.setup)

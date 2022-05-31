@@ -33,8 +33,9 @@ struct ZeroRunner {
     let configDirectory: Path
     let workspace: Workspace
     let verbose: Bool
+    let removeNotPresent: Bool
 
-    init(configDirectory: Path? = nil, workspace: Workspace, verbose: Bool) throws {
+    init(configDirectory: Path? = nil, workspace: Workspace, verbose: Bool, removeNotPresent: Bool = false) throws {
         let fallbackDirectories: [Path] = [
             Path.XDG.configHome.join("zero").join("dotfiles"),
             Path.home.join(".dotfiles"),
@@ -43,6 +44,7 @@ struct ZeroRunner {
             fallbackDirectories.last!
         self.verbose = verbose
         self.workspace = workspace
+        self.removeNotPresent = removeNotPresent
         try validate()
     }
 
