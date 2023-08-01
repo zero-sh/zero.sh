@@ -24,8 +24,6 @@ script:
   - ./script/lint
   - make
 before_deploy:
-  - git config --local user.name "Michael Sanders"
-  - git config --local user.email "michael.sanders@fastmail.com"
   - ./script/archive --package
 deploy:
   provider: releases
